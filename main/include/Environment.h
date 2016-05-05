@@ -29,10 +29,23 @@ namespace labgame
          **/
         std::vector<std::string> directions() const;
         Environment* neighbour(std::string) const;
+        
         std::vector<Actor* > get_visitors() const;
+        inline int get_id() const {return id;}
         
         template <typename T>
-        T* get_first_visitor_of_type() const;
+        Actor* get_first_visitor_of_type()
+        {
+            for(std::vector<Actor* >::iterator it = visitors.begin(); it != visitors.end(); ++it) 
+            {
+                if(typeid(T).name() == typeid(*it).name())
+                {
+                    return (*it);
+                }
+            }
+            return nullptr;
+        }
+        
         
         virtual std::string description() const = 0;
 

@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "NPC.h"
 #include "Troll.h"
+#include "Player.h"
 
 void labgame::Troll::die()
 {
@@ -31,7 +32,7 @@ void labgame::Troll::action()
         }
     }
     
-    Player * p = current_location->get_first_visitor_of_type<Player>()
+    Actor * p = current_location->get_first_visitor_of_type<Player>();
     
     if(p != nullptr)
     {
@@ -43,6 +44,7 @@ void labgame::Troll::action()
         std::vector<std::string> dirs = current_location->directions();
         int r = rand() % (dirs.size() - 1);
         this->go(dirs[r]);
+        std::cout << full_name() << " is now in room with id " << current_location->get_id() << std::endl;
     }
     
     

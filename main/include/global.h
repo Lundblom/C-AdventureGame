@@ -1,4 +1,5 @@
 #include <map>
+#include <functional>
 #include "Actor.h"
 
 namespace labgame
@@ -12,6 +13,7 @@ namespace labgame
         
         public:
         static void add_actor(std::string, Actor *);
+        static void map_on_actors(std::function<void(Actor*)>);
         static Actor * get_actor(std::string);
     };
     

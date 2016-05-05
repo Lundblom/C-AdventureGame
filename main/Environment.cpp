@@ -38,18 +38,6 @@ namespace labgame
         direction_translation[direction] = position;
     }
     
-    template <typename T>
-    T* Environment::get_first_visitor_of_type() const
-    {
-        for(std::vector<Actor* >::iterator it = visitors.begin(); it != visitors.end(); ++it) 
-        {
-            if(typeid(T).name() == typeid(*it).name())
-            {
-                return &(*it);
-            }
-        }
-        return nullptr;
-    }
     
     void Environment::enter(Actor * a)
     {

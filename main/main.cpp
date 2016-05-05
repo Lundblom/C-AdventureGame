@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include "PositionVector.h"
+#include "global.h"
 #include "Actor.h"
 #include "NPC.h"
 #include "Troll.h"
@@ -14,8 +15,6 @@
 
 
 //Global command map
-
-std::map<std::string, labgame::Actor*> actor_map;
 std::vector<labgame::Environment*> world;
 
 
@@ -135,13 +134,7 @@ int main() {
        std::cin.clear();
        std::cin.ignore(256,'\n');
        
-       std::cout << "Processing enemy turns..." << std::endl;
-       for (std::map<std::string, labgame::Actor*>::iterator 
-        it=actor_map.begin(); it!=actor_map.end(); ++it)
-       {
-           it->second->action();
-       }
+       global::map_on_actors([] (Actor* a) { a->action();});
    }
-   
    free(player);
 }
