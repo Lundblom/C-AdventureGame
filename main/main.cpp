@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <functional>
 #include <map>
 #include <vector>
@@ -20,6 +22,43 @@ std::vector<labgame::Environment*> world;
 
 using namespace labgame; 
 
+
+void loadAliases(std::string filename, Player * p)
+{
+    std::ifstream file("aliases");
+    std::string str; 
+    while (std::getline(file, str))
+    {
+        std::istringstream iss(str);
+        
+        std::string alias;
+        std::string command;
+        
+        if(iss)
+        {
+            iss >> alias;
+        }
+        else
+        {
+            throw std::runtime_error("Alias file is not according to syntax: [alias] [command].");
+        }
+        if(iss)
+        {
+            iss >> command;
+        }
+        else
+        {
+            throw std::runtime_error("Alias file is not according to syntax: [alias] [command].");
+        }
+        
+        if(command == "" or alias == "")
+        {
+            throw std::runtime_error("Alias file is not according to syntax: [alias] [command].");
+        }
+        
+        p->add_alias(alias, command);
+    }
+}
 
 int main() {
     
@@ -108,6 +147,8 @@ int main() {
             break;
     }
     
+    loadAliases("aliases", player);
+    
     //CLEAR ALL INPUT
     std::cin.clear();
     std::cin.ignore(256,'\n');
@@ -119,8 +160,6 @@ int main() {
      **/
      
      Troll troll("Sven", world[7]);
-   
-   //command_map["fight"]();
    /**
     * MAIN LOOP
     * 

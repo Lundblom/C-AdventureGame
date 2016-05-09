@@ -34,6 +34,7 @@ namespace labgame
         
         Player(std::string, int, Environment* start_position);
         
+        void add_alias(std::string, std::string);
         void examine();
         void examine(Object&);
         virtual std::string type() const = 0;

@@ -76,6 +76,11 @@ void labgame::Player::talk_to(Actor * a)
     //Do something nice
 }
 
+void labgame::Player::add_alias(std::string alias, std::string command)
+{
+    alias_map.insert(std::pair<std::string,std::string>(alias,command));
+}
+
 void labgame::Player::go(std::string * t)
 {
     labgame::Actor::go(*t);
@@ -99,6 +104,7 @@ void labgame::Player::inspect()
 
 void labgame::Player::action()
 {
+    start:
     while(true)
     {
         //Is set to false when shit goes wrong or when we need to return
@@ -134,8 +140,24 @@ void labgame::Player::action()
         auto it1 = command_map.find(input1);
         if(it1 == command_map.end())
         {
-            std::cout << "Couldn't find command" << std::endl;
-            continue;
+            //Also check for any aliases
+            auto it2 = alias_map.find(input1);
+            if(it2 == alias_map.end())
+            {
+                std::cout << "Couldn't find command" << std::endl;
+                continue;
+            }
+            else
+            {
+                it1 = command_map.find(it2->second);
+                
+                if(it1 == command_map.end())
+                {
+                    //This means there's an invalid alias
+                    std::cout << "Couldn't find command" << std::endl;
+                    goto start;
+                }
+            }
         }
         
         
