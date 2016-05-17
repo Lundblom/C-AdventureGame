@@ -13,20 +13,23 @@ namespace labgame
         std::vector<Object* > objects;
         std::vector<Environment* > neighbours;
         std::vector<Actor* > visitors;
-        std::map<std::string, int> direction_translation;
+        std::map<std::string, std::pair<int, std::string>> direction_translation;
         std::map<std::string, int> object_translation;
         
         protected:
         int max_neighbours = 0;
         const int id;
         
+        void link(std::string, std::string, Environment *);
+        
         public:
         
         Environment(int);
-        void add_neighbour(std::string, Environment*);
+        void add_neighbour(std::string,std::string, Environment*, bool);
         
         std::vector<std::string> directions() const;
         Environment* neighbour(std::string) const;
+        std::pair<Environment*, std::string> get_neighbour_and_out(std::string d) const;
         
         std::vector<Actor* > get_visitors() const;
         inline int get_id() const {return id;}
@@ -51,6 +54,9 @@ namespace labgame
         
         virtual std::string description() const = 0;
 
+        bool can_enter (Actor*, std::string);
+        bool can_leave (Actor*, std::string);
+        
         virtual void enter(Actor*);
         virtual void leave(Actor*);
         virtual void pick_up(std::string);

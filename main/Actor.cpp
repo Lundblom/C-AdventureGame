@@ -133,6 +133,19 @@ namespace labgame
         
     }
     
+    bool Actor::has_item(std::string name) const
+    {
+        for (std::vector<Object* >::const_iterator i = inventory.begin();
+        i != inventory.end(); ++i) 
+        {
+            if((*i)->Name() == name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     void Actor::use_item(int item_id)
     {
         std::cout << "Using item " << item_id << std::endl;
@@ -156,12 +169,33 @@ namespace labgame
     
     void Actor::go(std::string direction)
     {
-        Environment * e = this->current_location->neighbour(direction);
+        std::pair<Environment*, std::string> p = this->current_location->get_neighbour_and_out(direction);
+        Environment* e = p.first;
+        std::string eOut = p.second;
         
+        std::cout << "Trying to go to " << e->get_id() << std::endl;
         if(e == nullptr)
         {
+            std::cout << "Null room" << std::endl;
             return;
         }
+        if(current_location != nullptr)
+        {
+            if(!current_location->can_leave(this, direction))
+            {
+                std::cout << "You cant leave  " << current_location->get_id() << std::endl;
+                return;
+            }
+        }
+        
+        
+        if(!e->can_enter(this, eOut))
+        {
+            std::cout << "You cant enter " << e->get_id() << std::endl;
+            return;
+        }
+        
+        
         //Else
         if(current_location != nullptr)
         {

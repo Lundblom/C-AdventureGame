@@ -59,10 +59,13 @@ namespace labgame
         
         bool inventory_is_full() const;
         bool is_equippable(int) const;
+        bool has_item(std::string) const;
 
         void use_ability(std::function<void(Actor*)>, Actor *);
         
         void use_item(int);
+        
+        
         
         //Define these as pure if needed
         virtual int bonus_damage() const { return 0;}

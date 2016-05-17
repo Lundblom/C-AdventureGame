@@ -1,6 +1,0 @@
-TODO:
-
-go with a space after it generates a segment fault. Probable adds an empty nighbour somehow
-list all actors when inspecting room 
-make player see damage they take
-Segmentation fault för Players pick_up, löser sig om man ändrar så att Actor inte tar en pointer och istället skickar ner argumentet med dereference

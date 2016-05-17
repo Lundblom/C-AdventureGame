@@ -72,12 +72,10 @@ int main() {
     /**
      * INITIALIZE WORLD
      **/
-     for(int i = 0; i < 12; i++)
-     {
-        world.push_back(new Room(i+1));
-     }
-     
-     world.push_back(new Forest(13, "It's filled with bugs. EW!"));
+     world.push_back(new Room(1));
+     world.push_back(new Room(2));
+     world.push_back(new Room(3));
+     world.push_back(new Forest(4, "It's filled with bugs. EW!"));
      
      /**
       * ADD ITEMS
@@ -87,31 +85,9 @@ int main() {
      * CREATE NEIGHBOURS
      **/
      
-    world[0]->add_neighbour("se", world[12]);
-    world[1]->add_neighbour("e", world[12]);
-    world[2]->add_neighbour("n", world[2]);
-    world[3]->add_neighbour("e", world[5]);
-    world[4]->add_neighbour("sw", world[12]);
-    world[5]->add_neighbour("w", world[3]);
-    world[5]->add_neighbour("s", world[6]);
-    world[6]->add_neighbour("n", world[5]);
-    world[7]->add_neighbour("sw", world[8]);
-    world[7]->add_neighbour("s", world[9]);
-    world[7]->add_neighbour("e", world[11]);
-    world[8]->add_neighbour("ne", world[7]);
-    world[8]->add_neighbour("w", world[12]);
-    world[8]->add_neighbour("se", world[9]);
-    world[9]->add_neighbour("nw", world[8]);
-    world[9]->add_neighbour("n", world[7]);
-    world[9]->add_neighbour("se", world[10]);
-    world[10]->add_neighbour("nw", world[9]);
-    world[11]->add_neighbour("w", world[7]);
-    world[11]->add_neighbour("sw", world[9]);
-    world[12]->add_neighbour("nw", world[0]);
-    world[12]->add_neighbour("ne", world[4]);
-    world[12]->add_neighbour("w", world[1]);
-    world[12]->add_neighbour("s", world[5]);
-    world[12]->add_neighbour("e", world[8]);
+    world[0]->add_neighbour("se","nw", world[3], true);
+    world[1]->add_neighbour("s","n", world[3], true);
+    world[2]->add_neighbour("sw","ne", world[3],true);
     
     Player* player;
     
@@ -166,7 +142,7 @@ int main() {
      * INITIALIZE ACTORS
      **/
      
-     Troll troll("Sven", world[7]);
+     Troll troll("Sven", world[3]);
    /**
     * MAIN LOOP
     * 
