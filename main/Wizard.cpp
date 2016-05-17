@@ -10,6 +10,9 @@ labgame::Wizard::Wizard(std::string name, Environment* start) : Player(name, STA
 {
     Spell fireball([] (Actor* t) {t->take_damage(8, "fireball");}, "Fireball", 7);
     spell_map["fireball"] = &fireball;
+    
+    this->strength =  DEFAULT_STRENGTH;
+    this->intelligence = DEFAULT_INTELLIGENCE;
 }
 
 void labgame::Wizard::cast_spell(Actor* target)
@@ -51,7 +54,6 @@ void labgame::Wizard::cast_spell(Actor* target)
 void labgame::Wizard::fight(Actor* a)
 {
     Player::fight(a);
-    
     if(!command_successful)
         return;
     
@@ -88,6 +90,9 @@ void labgame::Wizard::fight(Actor* a)
             goto start; //Please dont kill me
             
     }
+    
+    std::cin.clear();
+    std::cin.ignore(256,'\n');
 }
 
 std::string labgame::Wizard::type() const

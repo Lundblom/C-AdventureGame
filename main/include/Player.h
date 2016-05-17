@@ -11,6 +11,7 @@ namespace labgame
         
         std::map<std::string, std::function<void()>> command_map;
         std::map<std::string, std::string> alias_map;
+
         void help();
         
         Actor * actor_target;
@@ -30,6 +31,8 @@ namespace labgame
         void print_map_options(std::map<std::string, S>);
         
         
+        void display_inventory() const;
+        
         public:
         
         Player(std::string, int, Environment* start_position);
@@ -39,8 +42,15 @@ namespace labgame
         void examine(Object&);
         virtual std::string type() const = 0;
         virtual void fight(Actor*) override;
-        void go(std::string*);
+        
+        virtual bool pick_up(std::string) override;
+        
         void inspect();
+        
+        //Wrapper functions
+        void use_item_p();
+        void go_p(std::string*);
+        void pick_up_p(std::string*);
         
         void talk_to(Actor *);
         

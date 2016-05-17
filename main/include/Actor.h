@@ -5,6 +5,8 @@
 #include "PositionVector.h"
 #include "Equippable.h"
 #include "Environment.h"
+#include "Weapon.h"
+#include "Armor.h"
 
 namespace labgame
 {
@@ -30,18 +32,17 @@ namespace labgame
         
         Environment* current_location;
         
-        Equippable* weapon = nullptr;
-        Equippable* hat = nullptr;
-        Equippable* armor = nullptr;
-        Equippable* boots = nullptr;
+        Weapon* weapon = nullptr;
+        Armor* hat = nullptr;
+        Armor* armor = nullptr;
+        Armor* boots = nullptr;
+        Equippable* extra = nullptr;
         
         int moveSpeed = 0;
-        
        
         void melee_attack(Actor *) const;
         
-        
-        
+        void equip(int);
         
         public:
         
@@ -55,6 +56,9 @@ namespace labgame
         
         virtual int max_inventory_size() const;
         void take_damage(int, std::string);
+        
+        bool inventory_is_full() const;
+        bool is_equippable(int) const;
 
         void use_ability(std::function<void(Actor*)>, Actor *);
         
@@ -71,7 +75,7 @@ namespace labgame
         
         
         //void drop(Object&)
-        //void pick_up(Object&)
+        virtual bool pick_up(std::string);
         
     };
 }

@@ -4,7 +4,6 @@ namespace labgame
 {
     Room::Room(int _id) : IndoorEnvironment(_id)
     {
-        std::clog << "Creating room with id " << id << "and neighbours " << NEIGHBOURS << std::endl;
         max_neighbours = NEIGHBOURS;
     }
     

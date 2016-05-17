@@ -13,6 +13,7 @@
 #include "Environment.h"
 #include "Room.h"
 #include "Forest.h"
+#include "Weapon.h"
 
 
 
@@ -78,6 +79,10 @@ int main() {
      
      world.push_back(new Forest(13, "It's filled with bugs. EW!"));
      
+     /**
+      * ADD ITEMS
+      **/
+    world[0]->add_item(new Weapon("Dull Sword", 10));     
     /**
      * CREATE NEIGHBOURS
      **/
@@ -110,7 +115,9 @@ int main() {
     
     Player* player;
     
+    //LABEL
     chooseClass:
+    
     std::cout << "Choose your class" << std::endl;
     std::cout << "1. Wizard" << std::endl;
     std::cout << "Choose one: ";
@@ -143,7 +150,7 @@ int main() {
     switch(chosenClass)
     {
         case 1:
-            player = new Wizard(name, world[1]);
+            player = new Wizard(name, world[0]);
             break;
     }
     
@@ -166,12 +173,11 @@ int main() {
     **/
    while(true)
    {
-       std::cout << "Your turn!" << std::endl;
        player->action();
        
        //Clear any leftover input
        std::cin.clear();
-       std::cin.ignore(256,'\n');
+       
        
        global::map_on_actors([] (Actor* a) { a->action();});
    }

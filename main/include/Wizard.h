@@ -10,6 +10,8 @@ namespace labgame
         
         const int STARTING_HP = 13;
         const int STARTING_MP = 50;
+        const int DEFAULT_INTELLIGENCE = 13;
+        const int DEFAULT_STRENGTH = 8;
         
         std::map<std::string, Spell*> spell_map;
         

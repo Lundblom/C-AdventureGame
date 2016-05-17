@@ -7,4 +7,9 @@ namespace labgame
     {
         std::cout << "it was used" << std::endl;
     }
+    
+    Equippable::Equippable(std::string _name) : Object(_name)
+    {
+        
+    }
 }

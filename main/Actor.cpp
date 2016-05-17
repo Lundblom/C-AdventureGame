@@ -1,8 +1,11 @@
 #include <math.h>
 #include <functional>
+#include <utility>
+#include <stdexcept>
 
 #include "Object.h"
 #include "Actor.h"
+#include "Equippable.h"
 
 
 namespace labgame
@@ -21,15 +24,15 @@ namespace labgame
         int reduction = 0;
         if(this->armor != nullptr)
         {
-            reduction += this->armor->Armor();
+            reduction += this->armor->Damage_Reduction();
         }
         if(this->hat != nullptr)
         {
-            reduction += this->hat->Armor();
+            reduction += this->hat->Damage_Reduction();
         }
         if(this->boots != nullptr)
         {
-            reduction += this->boots->Armor();
+            reduction += this->boots->Damage_Reduction();
         }
         damage = damage - reduction < 0 ? 0 : damage - reduction;
         
@@ -48,6 +51,38 @@ namespace labgame
     std::string Actor::full_name() const
     {
         return this->name() + " the " + this->type();
+    }
+    
+    void Actor::equip(int item_id)
+    {
+        //Will throw error if id is invalid
+        Object* item = inventory.at(item_id); 
+        
+        if(Weapon* w = dynamic_cast<Weapon*>(item))
+        {
+            this->weapon = w;
+        }
+        else if(Armor* a = dynamic_cast<Armor*>(item))
+        {
+            switch(a->Type())
+            {
+                case Armor::BOOTS:
+                    this->boots = a;
+                    break;
+                case Armor::ARMOR:
+                    this->armor = a;
+                    break;
+                case Armor::HAT:
+                    this->hat = a;
+                    break;
+                default:
+                    throw std::out_of_range("Cant find armor type");
+            }
+        }
+        else if(Equippable* e = dynamic_cast<Equippable*>(item))
+        {
+            this->extra = e;
+        }
     }
     
     void Actor::melee_attack(Actor* a) const
@@ -74,15 +109,49 @@ namespace labgame
         lambda(target);
     }
     
-    void Actor::use_item(int item_id)
+    bool Actor::inventory_is_full() const
     {
-        if(item_id > this->inventory.size() - 1)
+        return (inventory.size() == max_inventory_size());
+    }
+    
+    bool Actor::pick_up(std::string s)
+    {
+        Object * i = current_location->get_item(s);
+        
+        if (i == nullptr)
         {
-            std::cout << "That is not a valid id." << std::endl;
-            return;
+            return false;
         }
         
+        if (!inventory_is_full())
+        {
+            current_location->pick_up(s);
+            inventory.push_back(std::move(i));
+            return true;
+        }
+        return false;
+        
+    }
+    
+    void Actor::use_item(int item_id)
+    {
+        std::cout << "Using item " << item_id << std::endl;
+        if (item_id > this->inventory.size() - 1 || item_id < 0)
+        {
+            return;
+        }
         this->inventory[item_id]->use();
+    }
+    
+    bool Actor::is_equippable(int item_id) const
+    {
+        std::cout << "Checking if equippable" << std::endl;
+        if(item_id < 0 || item_id > inventory.size()-1)
+        {
+            throw std::out_of_range("Too big id in is_equippable");
+        }
+        Equippable* e = dynamic_cast<Equippable *>(inventory.at(item_id));
+        return (e!=nullptr);
     }
     
     void Actor::go(std::string direction)
@@ -100,5 +169,8 @@ namespace labgame
         }
         current_location = e;
         current_location->enter(this);
+        
+        //DEBUG!
+        std::cout << full_name() << " is now in room with id " << current_location->get_id() << std::endl;
     }
 }

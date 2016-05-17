@@ -44,7 +44,6 @@ void labgame::Troll::action()
         std::vector<std::string> dirs = current_location->directions();
         int r = rand() % (dirs.size() - 1);
         this->go(dirs[r]);
-        std::cout << full_name() << " is now in room with id " << current_location->get_id() << std::endl;
     }
     
     
