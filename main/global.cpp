@@ -9,6 +9,11 @@ namespace labgame
         actor_map[name] = a;
     }
     
+    void global::remove_actor(std::string name, Actor * a)
+    {
+        actor_map.erase(name);
+    }
+    
     void global::map_on_actors(std::function<void(Actor*)> f)
     {
         for(std::map<std::string, Actor *>::iterator it = 

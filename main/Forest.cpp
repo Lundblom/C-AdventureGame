@@ -19,12 +19,4 @@ namespace labgame
         ret += room_description;
         return ret;
     }
-    
-    void Forest::enter(Actor * a)
-    {
-    }
-    
-    void Forest::leave(Actor * a)
-    {
-    }
 }

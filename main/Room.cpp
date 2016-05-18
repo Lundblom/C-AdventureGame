@@ -18,14 +18,4 @@ namespace labgame
         ret += room_description;
         return ret;
     }
-    
-    void Room::enter(Actor * a)
-    {
-        
-    }
-    
-    void Room::leave(Actor * a)
-    {
-        
-    }
 }

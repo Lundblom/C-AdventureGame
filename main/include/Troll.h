@@ -20,7 +20,7 @@ namespace labgame
         protected:
         void throw_tantrum();
         public:
-        Troll(std::string, Environment*);
+        Troll(std::string);
         
         void action() override;
         virtual std::string type() const override;

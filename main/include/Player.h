@@ -35,12 +35,13 @@ namespace labgame
         
         public:
         
-        Player(std::string, int, Environment* start_position);
+        Player(std::string, int);
         
         void add_alias(std::string, std::string);
         void examine();
         void examine(Object&);
         virtual std::string type() const = 0;
+        virtual std::string comparable_type() const;
         virtual void fight(Actor*) override;
         
         virtual bool pick_up(std::string) override;

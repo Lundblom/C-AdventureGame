@@ -39,7 +39,7 @@ void labgame::Player::populate_map()
     add_to_map("use", &Player::use_item_p);
 }
 
-labgame::Player::Player(std::string name, int hp, Environment* start_position) : Actor(hp, start_position)
+labgame::Player::Player(std::string name, int hp) : Actor(hp)
 {
     this->_name = name;
     populate_map();
@@ -47,8 +47,9 @@ labgame::Player::Player(std::string name, int hp, Environment* start_position) :
 
 void labgame::Player::fight(Actor* a)
 {
-    if(a == nullptr)
+    if(a == nullptr || !current_location->contains_actor(a))
     {
+        std::cout << "Can't find fight target" << std::endl;
         command_successful = false;
         return;
     }
@@ -121,7 +122,11 @@ void labgame::Player::talk_to(Actor * a)
         command_successful = false;
         return;
     }
-    //Do something nice
+}
+
+std::string labgame::Player::comparable_type() const
+{
+    return "Player";
 }
 
 void labgame::Player::add_alias(std::string alias, std::string command)
@@ -212,6 +217,22 @@ void labgame::Player::inspect()
     
     std::cout << "--Items in room--" << std::endl;
     std::cout << current_location->get_items_as_text() << std::endl;
+    std::cout << std::endl;
+    
+    std::vector<std::string> visitors = current_location->get_visitor_names();
+    std::cout << "--Creatures in room--" << std::endl;
+    for (std::vector<std::string>::const_iterator i = visitors.begin(); 
+        i != visitors.end(); ++i) 
+    {
+        if(*i == full_name())
+        {
+            std::cout << "You" << std::endl;
+        }
+        else
+        {
+            std::cout << *i << std::endl;
+        }
+    }
     
     //Used to allow player to enter another command this turn
     command_successful = false;

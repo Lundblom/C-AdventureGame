@@ -6,7 +6,12 @@
 #include "Spell.h"
 
 
-labgame::Wizard::Wizard(std::string name, Environment* start) : Player(name, STARTING_HP, start)
+const int labgame::Wizard::STARTING_HP = 13;
+const int labgame::Wizard::STARTING_MP = 50;
+const int labgame::Wizard::DEFAULT_INTELLIGENCE = 14;
+const int labgame::Wizard::DEFAULT_STRENGTH = 8;
+
+labgame::Wizard::Wizard(std::string name, int hp) : Player(name, hp)
 {
     Spell fireball([] (Actor* t) {t->take_damage(8, "fireball");}, "Fireball", 7);
     spell_map["fireball"] = &fireball;

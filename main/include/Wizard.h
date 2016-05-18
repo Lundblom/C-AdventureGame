@@ -7,12 +7,7 @@ namespace labgame
     class Wizard : public Player
     {
         private:
-        
-        const int STARTING_HP = 13;
-        const int STARTING_MP = 50;
-        const int DEFAULT_INTELLIGENCE = 13;
-        const int DEFAULT_STRENGTH = 8;
-        
+
         std::map<std::string, Spell*> spell_map;
         
         protected:
@@ -20,7 +15,12 @@ namespace labgame
         
         public:
         
-        Wizard(std::string name, Environment*);
+        static const int STARTING_HP;
+        static const int STARTING_MP;
+        static const int DEFAULT_INTELLIGENCE;
+        static const int DEFAULT_STRENGTH;
+        
+        Wizard(std::string, int);
         
         virtual void fight(Actor *) override;
         virtual std::string type() const;

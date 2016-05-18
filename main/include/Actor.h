@@ -26,7 +26,7 @@ namespace labgame
         int wisdom = 0;
         int charisma = 0;
         
-        virtual void die() = 0;
+        virtual void die();
         
         std::vector<Object*> inventory;
         
@@ -47,11 +47,13 @@ namespace labgame
         public:
         
         
-        Actor(int, Environment*);
+        Actor(int);
+        ~Actor();
         
         std::string name() const {return this->_name;}
         std::string full_name() const;
         virtual std::string type() const = 0;
+        virtual std::string comparable_type() const = 0;
         int hp() const {return this->_hp;}
         
         virtual int max_inventory_size() const;
@@ -64,6 +66,8 @@ namespace labgame
         void use_ability(std::function<void(Actor*)>, Actor *);
         
         void use_item(int);
+        
+        void move_to(Environment*);
         
         
         

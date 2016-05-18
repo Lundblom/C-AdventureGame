@@ -29,26 +29,16 @@ namespace labgame
         
         std::vector<std::string> directions() const;
         Environment* neighbour(std::string) const;
-        std::pair<Environment*, std::string> get_neighbour_and_out(std::string d) const;
         
-        std::vector<Actor* > get_visitors() const;
+        
+        std::vector<std::string> get_visitor_names() const;
         inline int get_id() const {return id;}
         Object* get_item(std::string name);
         std::string get_items_as_text() const;
+        std::pair<Environment*, std::string> get_neighbour_and_out(std::string d) const;
+        Actor* get_first_visitor_of_type(std::string type) const;
         
-        template <typename T>
-        Actor* get_first_visitor_of_type()
-        {
-            for(std::vector<Actor* >::iterator it = visitors.begin(); 
-                it != visitors.end(); ++it) 
-            {
-                if(typeid(T).name() == typeid(*it).name())
-                {
-                    return (*it);
-                }
-            }
-            return nullptr;
-        }
+        bool contains_actor(Actor* a) const;
         
         void add_item(Object *);
         
@@ -60,7 +50,7 @@ namespace labgame
         virtual void enter(Actor*);
         virtual void leave(Actor*);
         virtual void pick_up(std::string);
-        void drop(Object&);
+        void drop(Object*);
         
     };
 }

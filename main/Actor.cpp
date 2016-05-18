@@ -11,12 +11,18 @@
 namespace labgame
 {
     
-    Actor::Actor(int hp, Environment* start_position)
+    Actor::Actor(int hp)
     {
         this->_hp = hp;
-        start_position->enter(this);
-        current_location = start_position;
-        
+    }
+    
+    Actor::~Actor()
+    {
+        for (std::vector<Object*>::const_iterator i = inventory.begin();
+        i != inventory.end(); ++i) 
+        {
+            free (*i);
+        }
     }
     
     void Actor::take_damage(int damage, std::string source)
@@ -39,13 +45,31 @@ namespace labgame
         this->_hp -= (damage);
         
         //Uncomment this for damage logging
-        /*std::cout << this->full_name() << " took " << damage <<
-        " damage from" << source << std::endl; */
+        std::cout << this->full_name() << " took " << damage <<
+        " damage from" << source << ". Health is now " << hp() << std::endl;
         
-        if(this->hp() >= 0)
+        if(this->hp() <= 0)
         {
             this->die();   
         }
+    }
+    
+    void Actor::die() 
+    {
+        current_location->leave(this);
+        weapon = nullptr;
+        hat = nullptr;
+        armor = nullptr;
+        boots = nullptr;
+        extra = nullptr;
+        for (std::vector<Object*>::const_iterator i = inventory.begin();
+        i != inventory.end(); ++i) 
+        {
+            current_location->drop(*i);
+        }
+        
+        current_location = nullptr;
+        
     }
     
     std::string Actor::full_name() const
@@ -94,8 +118,9 @@ namespace labgame
         }
         
         int damage = (std::rand() % ( this->strength < 1 ? 1 : this->strength )) + 1 + bonus;
-        a->take_damage(damage, "Melee");
         std::cout << this->full_name() << " hits " << a->full_name() << " for " << damage << " damage!" << std::endl;
+        a->take_damage(damage, "Melee");
+        
     }
     
     //Inventory size formula: floor( sqrt(x) + x^1.2)
@@ -112,6 +137,12 @@ namespace labgame
     bool Actor::inventory_is_full() const
     {
         return (inventory.size() == max_inventory_size());
+    }
+    
+    void Actor::move_to(Environment* e)
+    {
+        this->current_location = e;
+        e->enter(this);
     }
     
     bool Actor::pick_up(std::string s)
@@ -169,16 +200,19 @@ namespace labgame
     
     void Actor::go(std::string direction)
     {
+        std::clog << "in go" << std::endl;
         std::pair<Environment*, std::string> p = this->current_location->get_neighbour_and_out(direction);
         Environment* e = p.first;
         std::string eOut = p.second;
         
-        std::cout << "Trying to go to " << e->get_id() << std::endl;
+        std::clog << "e is " << e << std::endl;
+        
         if(e == nullptr)
         {
             std::cout << "Null room" << std::endl;
             return;
         }
+        std::clog << "Curren loc: " << current_location << std::endl;
         if(current_location != nullptr)
         {
             if(!current_location->can_leave(this, direction))
@@ -188,6 +222,7 @@ namespace labgame
             }
         }
         
+        std::clog << "Checking if can etner" << std::endl;
         
         if(!e->can_enter(this, eOut))
         {
@@ -195,12 +230,15 @@ namespace labgame
             return;
         }
         
+        std::clog << "Can enter" << std::endl;
         
         //Else
         if(current_location != nullptr)
         {
+            std::clog << "Leaving current" << std::endl;
             current_location->leave(this);
         }
+        std::clog << "Changing current" << std::endl;
         current_location = e;
         current_location->enter(this);
         

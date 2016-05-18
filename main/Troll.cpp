@@ -8,6 +8,7 @@
 
 void labgame::Troll::die()
 {
+    NPC::die();
     std::cout << "A troll died!" << std::endl;
 }
 
@@ -32,7 +33,8 @@ void labgame::Troll::action()
         }
     }
     
-    Actor * p = current_location->get_first_visitor_of_type<Player>();
+    Actor * p = current_location->get_first_visitor_of_type("Player");
+    std::clog << "Got player as " << p << std::endl;
     
     if(p != nullptr)
     {
@@ -42,15 +44,12 @@ void labgame::Troll::action()
     {
         //Go somewhere randomly
         std::vector<std::string> dirs = current_location->directions();
-        int r = rand() % (dirs.size() - 1);
+        int r = rand() % (dirs.size());
         this->go(dirs[r]);
     }
-    
-    
-    
 }
 
-labgame::Troll::Troll(std::string _name, Environment* start_position) : NPC(NPC::AGRESSIVE, HEALTH, _name, start_position)
+labgame::Troll::Troll(std::string _name) : NPC(NPC::AGRESSIVE, HEALTH, _name)
 {
 }
 

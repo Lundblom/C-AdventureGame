@@ -126,7 +126,8 @@ int main() {
     switch(chosenClass)
     {
         case 1:
-            player = new Wizard(name, world[0]);
+            player = new Wizard(name, Wizard::STARTING_HP);
+            player->move_to(world[1]);
             break;
     }
     
@@ -142,20 +143,23 @@ int main() {
      * INITIALIZE ACTORS
      **/
      
-     Troll troll("Sven", world[3]);
+    Troll troll("Sven");
+    troll.move_to(world[3]);
    /**
     * MAIN LOOP
     * 
     **/
    while(true)
    {
+       std::clog << "Actor turns" << std::endl;
+       
+       
+       global::map_on_actors([] (Actor* a) { a->action();});
+       
        player->action();
        
        //Clear any leftover input
        std::cin.clear();
-       
-       
-       global::map_on_actors([] (Actor* a) { a->action();});
    }
    free(player);
 }

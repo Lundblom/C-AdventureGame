@@ -18,11 +18,15 @@ namespace labgame
         
         public: 
         
-        NPC(Temper,int, std::string, Environment*);
-        NPC(Environment*);
+        NPC(Temper,int, std::string);
+        NPC();
+        ~NPC();
+        
+        virtual void die() override;
         
         
         virtual std::string type() const override;
+        virtual std::string comparable_type() const override;
         
         
         

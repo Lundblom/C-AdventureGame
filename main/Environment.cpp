@@ -59,6 +59,11 @@ namespace labgame
         return true;
     }
     
+    void Environment::drop(Object* o)
+    {
+        this->objects.push_back(std::move(o));
+    }
+    
     bool Environment::can_leave(Actor* a, std::string dir)
     {
         return true;
@@ -66,18 +71,47 @@ namespace labgame
     
     void Environment::enter(Actor * a)
     {
+        std::clog << "Adding actor " << a->full_name() << " to id " << id << std::endl;
         visitors.push_back(a);
+    }
+
+    bool Environment::contains_actor(Actor* a) const
+    {
+        for (std::vector<Actor*>::const_iterator i = visitors.begin();
+            i != visitors.end(); ++i) 
+        {
+            if((*i) == a)
+            {
+                return true;
+            }
+        }
+        return false;
     }
     
     void Environment::leave(Actor * a)
     {
+        std::clog << a->full_name() << " is leaving " << id << " , size of visitors is " << visitors.size() << std::endl;
         for(std::vector<Actor *>::iterator it = visitors.begin(); it != visitors.end(); it++)
         {
             if(*it == a)
             {
                 visitors.erase(it);
+                return;
             }
         }
+    }
+    
+    std::vector<std::string> Environment::get_visitor_names() const
+    {
+        std::vector<std::string> result;
+        
+        for (std::vector<Actor* >::const_iterator i = visitors.begin();
+            i != visitors.end(); ++i) 
+        {
+            result.push_back((*i)->full_name());
+        }
+        
+        return result;
     }
     
     void Environment::link(std::string out, std::string in, Environment * e)
@@ -98,6 +132,22 @@ namespace labgame
         
         direction_translation[out] = {position, in};
     }
+    
+    Actor* Environment::get_first_visitor_of_type(std::string type) const
+    {
+        std::clog << "Looking for " << type << " in room " << id << " with visitors size " << visitors.size() << std::endl;
+        for(std::vector<Actor* >::const_iterator it = visitors.begin(); 
+            it != visitors.end(); ++it) 
+        {
+            if((*it)->comparable_type() == type)
+            {
+                return (*it);
+            }
+        }
+        return nullptr;
+    }
+    
+    
     
     std::string Environment::get_items_as_text() const
     {

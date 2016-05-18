@@ -19,7 +19,5 @@ namespace labgame
         Room(int _id, std::string _desc);
         
         virtual std::string description() const override;
-        virtual void enter(Actor*) override;
-        virtual void leave(Actor*) override;
     };
 }
