@@ -113,7 +113,7 @@ namespace labgame
     void Actor::melee_attack(Actor* a) const
     {
         int bonus = 0;
-        if(this->weapon != NULL)
+        if(this->weapon != nullptr)
         {
             bonus += this->weapon->Damage();
         }
@@ -124,7 +124,33 @@ namespace labgame
         
     }
     
-    //Inventory size formula: floor( sqrt(x) + x^1.2)
+    Object* Actor::find_item_in_inventory(std::string name)
+    {
+        for (std::vector<Object*>::const_iterator i = inventory.begin(); 
+            i != inventory.end(); ++i) 
+        {
+            if((*i)->Name() == name)
+            {
+                return (*i);
+            }
+        }
+        
+        return nullptr;
+    }
+    
+    void Actor::drop(std::string name)
+    {
+        Object* item = find_item_in_inventory(name);
+        
+        if(item == nullptr)
+        {
+            return;
+        }
+        
+        current_location->drop(item);
+    }
+    
+    //Inventory size formula: floor( sqrt(strength) + strength^1.2)
     int Actor::max_inventory_size() const
     {
         return (floor(pow(this->strength, 0.5) + pow(this->strength, 1.2)));

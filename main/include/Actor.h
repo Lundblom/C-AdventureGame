@@ -30,6 +30,8 @@ namespace labgame
         
         std::vector<Object*> inventory;
         
+        
+        
         Environment* current_location;
         
         Weapon* weapon = nullptr;
@@ -41,6 +43,8 @@ namespace labgame
         int moveSpeed = 0;
        
         void melee_attack(Actor *) const;
+        
+        Object* find_item_in_inventory(std::string);
         
         void equip(int);
         
@@ -83,7 +87,7 @@ namespace labgame
     
         
         
-        //void drop(Object&)
+        void drop(std::string);
         virtual bool pick_up(std::string);
         
     };

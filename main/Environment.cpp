@@ -61,6 +61,7 @@ namespace labgame
     
     void Environment::drop(Object* o)
     {
+        objects.insert({o->Name(), o});
     }
     
     bool Environment::can_leave(Actor* a, std::string dir)
@@ -145,8 +146,6 @@ namespace labgame
         }
         return nullptr;
     }
-    
-    
     
     std::string Environment::get_items_as_text() const
     {

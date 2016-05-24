@@ -38,6 +38,7 @@ void labgame::Player::populate_map()
     add_to_map("inventory", &Player::display_inventory);
     add_to_map("use", &Player::use_item_p);
     add_to_map("unlock", &Player::unlock_p, string_target);
+    add_to_map("drop", &Player::drop_p, string_target);
 }
 
 labgame::Player::Player(std::string name, int hp) : Actor(hp)
@@ -145,6 +146,16 @@ void labgame::Player::go_p(std::string * t)
     labgame::Actor::go(*t);
 }
 
+void labgame::Player::drop_p(std::string * s)
+{
+    if(s == nullptr)
+    {
+        command_successful = false;
+        return;
+    }
+    drop(*s);
+}
+
 void labgame::Player::pick_up_p(std::string * s)
 {
     if(s == nullptr)
@@ -244,7 +255,6 @@ void labgame::Player::inspect()
             std::cout << *i << std::endl;
         }
     }
-    
     //Used to allow player to enter another command this turn
     command_successful = false;
 }
