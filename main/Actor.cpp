@@ -150,7 +150,7 @@ namespace labgame
         current_location->drop(item);
     }
     
-    //Inventory size formula: floor( sqrt(strength) + strength^1.2)
+    //Inventory size formula: floor( sqrt (strength) + strength^1.2)
     int Actor::max_inventory_size() const
     {
         return (floor(pow(this->strength, 0.5) + pow(this->strength, 1.2)));
@@ -168,6 +168,10 @@ namespace labgame
     
     void Actor::move_to(Environment* e)
     {
+        if(this->current_location != nullptr)
+        {
+            this->current_location->leave(this);
+        }
         this->current_location = e;
         e->enter(this);
     }

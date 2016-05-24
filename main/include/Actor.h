@@ -32,7 +32,7 @@ namespace labgame
         
         
         
-        Environment* current_location;
+        Environment* current_location = nullptr;
         
         Weapon* weapon = nullptr;
         Armor* hat = nullptr;
