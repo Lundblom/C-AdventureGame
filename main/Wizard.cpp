@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include "Actor.h"
 #include "Player.h"
@@ -11,10 +12,16 @@ const int labgame::Wizard::STARTING_MP = 50;
 const int labgame::Wizard::DEFAULT_INTELLIGENCE = 14;
 const int labgame::Wizard::DEFAULT_STRENGTH = 8;
 
+const std::map<std::string, labgame::Spell> labgame::Wizard::all_spells = {
+    {"fireball", Spell([] (Actor* t) {t->take_damage(9, "fireball");}, "Fireball", 6)},
+    {"arcane bolt", Spell([] (Actor* t) {t->take_damage(3, " arcane bolt");}, "Arcane Bolt", 1)}
+};
+
+
 labgame::Wizard::Wizard(std::string name, int hp) : Player(name, hp)
 {
-    Spell fireball([] (Actor* t) {t->take_damage(8, "fireball");}, "Fireball", 7);
-    spell_map["fireball"] = &fireball;
+    known_spells.push_back("fireball");
+    known_spells.push_back("arcane bolt");
     
     this->strength =  DEFAULT_STRENGTH;
     this->intelligence = DEFAULT_INTELLIGENCE;
@@ -26,12 +33,13 @@ void labgame::Wizard::cast_spell(Actor* target)
     {
         int counter = 1;
         
-        for (typename std::map<std::string, Spell*>::iterator 
-            it=spell_map.begin(); it!=spell_map.end(); ++it)
+        for(std::vector<std::string>::const_iterator it = known_spells.begin();
+            it != known_spells.end(); ++it)
         {
-            std::string theName =  it->second->name();
+            const Spell * theSpell = &(all_spells.find(*it)->second);
+            std::string theName =  theSpell->name();
             theName[0] = toupper(theName[0]);
-            std::cout << counter << ". " << theName << "(" << it->second->cost() <<" mp)" << std::endl;
+            std::cout << counter << ". " << theName << "(" << theSpell->cost() <<" mp)" << std::endl;
             counter++;
         }
         std::cout << "Choose one (enter the name): ";
@@ -41,15 +49,19 @@ void labgame::Wizard::cast_spell(Actor* target)
         
         std::cout << std::endl;
         
-        auto chosenSpell = spell_map.find(choice);
+        std::transform(choice.begin(), choice.end(), choice.begin(), ::tolower);
         
-        if(chosenSpell == spell_map.end())
+        auto chosenSpell = all_spells.find(choice);
+        
+        if(chosenSpell == all_spells.end())
         {
             std::cout << "Not a valid spell!" << std::endl;
             continue;
         }
         
-        use_ability(spell_map.find(choice)->second->get_spell(), target);
+        std::cout << "You cast " << chosenSpell->second.name() << "!" << std::endl;
+        
+        use_ability(all_spells.find(choice)->second.get_spell(), target);
         break;
     }
 }

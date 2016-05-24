@@ -8,7 +8,9 @@ namespace labgame
     {
         private:
 
-        std::map<std::string, Spell*> spell_map;
+        static const std::map<std::string, Spell> all_spells;
+        
+        std::vector<std::string> known_spells;
         
         protected:
         void cast_spell(Actor*);
