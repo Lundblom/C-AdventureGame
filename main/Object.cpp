@@ -7,4 +7,8 @@ namespace labgame
     {
         
     }
+    
+    void Object::use()
+    {
+    }
 }

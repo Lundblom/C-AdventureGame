@@ -15,6 +15,6 @@ namespace labgame
         inline std::string Name() const {return this->name;}
         inline bool is_useable() const {return this->useable;}
         
-        virtual void use() = 0;
+        virtual void use();
     };
 }

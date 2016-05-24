@@ -61,7 +61,6 @@ namespace labgame
     
     void Environment::drop(Object* o)
     {
-        this->objects.push_back(std::move(o));
     }
     
     bool Environment::can_leave(Actor* a, std::string dir)
@@ -152,29 +151,28 @@ namespace labgame
     std::string Environment::get_items_as_text() const
     {
         std::ostringstream os;
-        for (std::vector<Object* >::const_iterator i = objects.begin();
+        for (std::map<std::string, Object*>::const_iterator i = objects.begin();
         i != objects.end(); ++i) 
         {
-            os << (*i)->Name() << std::endl;
+            os << i->second->Name() << std::endl;
         }
         return os.str();
     }
     
     Object* Environment::get_item(std::string name)
     {
-        auto it = object_translation.find(name);
+        auto it = objects.find(name);
         
-        if(it == object_translation.end())
+        if(it == objects.end())
         {
             return nullptr;
         }
-        return objects[it->second];
+        return it->second;
     }
 
     void Environment::add_item(Object * o)
     {
-        this->objects.push_back(o);
-        object_translation.insert({o->Name(), objects.size() -1});
+        objects.insert({o->Name(), o});
     }
     
     std::vector<std::string> Environment::directions() const
@@ -192,6 +190,6 @@ namespace labgame
     
     void Environment::pick_up(std::string name)
     {
-        object_translation.erase(name);
+        objects.erase(name);
     }
 }

@@ -10,11 +10,10 @@ namespace labgame
     {
         private:
         
-        std::vector<Object* > objects;
         std::vector<Environment* > neighbours;
         std::vector<Actor* > visitors;
         std::map<std::string, std::pair<int, std::string>> direction_translation;
-        std::map<std::string, int> object_translation;
+        std::map<std::string, Object*> objects;
         
         protected:
         int max_neighbours = 0;
@@ -44,8 +43,8 @@ namespace labgame
         
         virtual std::string description() const = 0;
 
-        bool can_enter (Actor*, std::string);
-        bool can_leave (Actor*, std::string);
+        virtual bool can_enter (Actor*, std::string);
+        virtual bool can_leave (Actor*, std::string);
         
         virtual void enter(Actor*);
         virtual void leave(Actor*);

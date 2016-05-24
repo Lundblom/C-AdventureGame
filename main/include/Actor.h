@@ -64,7 +64,8 @@ namespace labgame
         bool has_item(std::string) const;
 
         void use_ability(std::function<void(Actor*)>, Actor *);
-        
+    
+        void unlock(std::string dir);    
         void use_item(int);
         
         void move_to(Environment*);
@@ -79,6 +80,7 @@ namespace labgame
         
         virtual void go(std::string direction);
         virtual void fight(Actor *) = 0;
+    
         
         
         //void drop(Object&)

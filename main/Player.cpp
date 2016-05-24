@@ -37,6 +37,7 @@ void labgame::Player::populate_map()
     add_to_map("pickup", &Player::pick_up_p, string_target);
     add_to_map("inventory", &Player::display_inventory);
     add_to_map("use", &Player::use_item_p);
+    add_to_map("unlock", &Player::unlock_p, string_target);
 }
 
 labgame::Player::Player(std::string name, int hp) : Actor(hp)
@@ -154,6 +155,17 @@ void labgame::Player::pick_up_p(std::string * s)
     Player::pick_up(*s);
 }
 
+void labgame::Player::unlock_p(std::string* s)
+{
+    if(s == nullptr)
+    {
+        command_successful = false;
+        return;
+    }
+    std::cout << "IN  P unlock" << std::endl;
+    Player::unlock(*s);
+}
+
 void labgame::Player::display_inventory() const
 {
     std::cout << std::endl;
@@ -172,7 +184,7 @@ void labgame::Player::display_inventory() const
             {
                 star = " *";
             }
-            std::cout << counter++ << ". " << (*i)->Name() << star;
+            std::cout << counter++ << ". " << (*i)->Name() << star << std::endl;
         }
     }
     std::cout << std::endl;
@@ -180,7 +192,6 @@ void labgame::Player::display_inventory() const
 
 bool labgame::Player::pick_up(std::string s)
 {
-    std::cout << "Int player pickup" << std::endl;
     bool success = Actor::pick_up(s);
     
     if(!success)

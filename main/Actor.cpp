@@ -6,6 +6,7 @@
 #include "Object.h"
 #include "Actor.h"
 #include "Equippable.h"
+#include "LockedRoom.h"
 
 
 namespace labgame
@@ -166,15 +167,38 @@ namespace labgame
     
     bool Actor::has_item(std::string name) const
     {
+        std::cout << "Checking if has item " << name << std::endl;
         for (std::vector<Object* >::const_iterator i = inventory.begin();
         i != inventory.end(); ++i) 
         {
+            std::cout << "Looping once" << std::endl;
             if((*i)->Name() == name)
             {
+                std::cout << "Have item" << std::endl;
                 return true;
             }
         }
+        std::cout << "Doesnt have item" << std::endl;
         return false;
+    }
+    
+    void Actor::unlock(std::string dir)
+    {
+        std::cout << "In actor unlock" << std::endl;
+        LockedRoom* r = dynamic_cast<LockedRoom*>(current_location);
+        if(r != nullptr)
+        {
+            r->unlock(this, dir);
+        }
+        
+        std::pair<Environment*, std::string> p = current_location->get_neighbour_and_out(dir);
+        LockedRoom* rNext = dynamic_cast<LockedRoom*>(p.first);
+        std::string out = p.second;
+        
+        if(rNext != nullptr)
+        {
+            rNext->unlock(this, out);
+        }
     }
     
     void Actor::use_item(int item_id)
@@ -222,7 +246,7 @@ namespace labgame
             }
         }
         
-        std::clog << "Checking if can etner" << std::endl;
+        std::clog << "Checking if can enter" << std::endl;
         
         if(!e->can_enter(this, eOut))
         {

@@ -52,6 +52,7 @@ namespace labgame
         void use_item_p();
         void go_p(std::string*);
         void pick_up_p(std::string*);
+        void unlock_p(std::string*);
         
         void talk_to(Actor *);
         
