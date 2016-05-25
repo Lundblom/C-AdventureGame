@@ -39,13 +39,14 @@ void labgame::Wizard::cast_spell(Actor* target)
             const Spell * theSpell = &(all_spells.find(*it)->second);
             std::string theName =  theSpell->name();
             theName[0] = toupper(theName[0]);
-            std::cout << counter << ". " << theName << "(" << theSpell->cost() <<" mp)" << std::endl;
+            std::cout << theName << " (" << theSpell->cost() <<" mp)" << std::endl;
             counter++;
         }
         std::cout << "Choose one (enter the name): ";
         
         std::string choice;
-        std::cin >> choice;
+        std::getline(std::cin, choice);
+        
         
         std::cout << std::endl;
         
@@ -94,6 +95,9 @@ void labgame::Wizard::fight(Actor* a)
         std::cout << std::endl;
     }
     
+    std::cin.clear();
+    std::cin.ignore(256,'\n');
+    
     switch(choice)
     {
         case 1:
@@ -108,8 +112,9 @@ void labgame::Wizard::fight(Actor* a)
             
     }
     
+    //std::cin.ignore(256,'\n');
     std::cin.clear();
-    std::cin.ignore(256,'\n');
+    
 }
 
 std::string labgame::Wizard::type() const
