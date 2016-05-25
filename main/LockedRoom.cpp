@@ -16,6 +16,11 @@ namespace labgame
         }
     }
     
+    void LockedRoom::wait(Actor* a) 
+    {
+        
+    }
+    
     bool LockedRoom::unlock(Actor* a, std::string dir)
     {
         std::cout << "In LockedRoom unlock with dir " << dir << std::endl;

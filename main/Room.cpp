@@ -18,4 +18,9 @@ namespace labgame
         ret += room_description;
         return ret;
     }
+    
+    void Room::wait(Actor * a)
+    {
+        
+    }
 }

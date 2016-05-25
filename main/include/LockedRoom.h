@@ -29,5 +29,6 @@ namespace labgame
         
         virtual bool can_enter(Actor*, std::string) override;
         virtual bool can_leave(Actor*, std::string) override;
+        virtual void wait(Actor*) override;
     };
 }

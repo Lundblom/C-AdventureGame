@@ -114,6 +114,7 @@ namespace labgame
         return result;
     }
     
+    
     void Environment::link(std::string out, std::string in, Environment * e)
     {
         if(neighbours.size() >= max_neighbours)

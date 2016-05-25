@@ -49,6 +49,7 @@ namespace labgame
         virtual void enter(Actor*);
         virtual void leave(Actor*);
         virtual void pick_up(std::string);
+        virtual void wait(Actor*) = 0;
         void drop(Object*);
         
     };

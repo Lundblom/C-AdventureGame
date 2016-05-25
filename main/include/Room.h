@@ -19,5 +19,6 @@ namespace labgame
         Room(int _id, std::string _desc);
         
         virtual std::string description() const override;
+        virtual void wait(Actor*) override;
     };
 }

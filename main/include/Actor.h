@@ -15,6 +15,7 @@ namespace labgame
     {
         private:
         int _hp;
+        int maxHp;
         
         protected:
         std::string _name;
@@ -62,6 +63,7 @@ namespace labgame
         
         virtual int max_inventory_size() const;
         void take_damage(int, std::string);
+        void heal_damage(int, std::string);
         
         bool inventory_is_full() const;
         bool is_equippable(int) const;
@@ -84,6 +86,7 @@ namespace labgame
         
         virtual void go(std::string direction);
         virtual void fight(Actor *) = 0;
+        virtual void wait();
     
         
         

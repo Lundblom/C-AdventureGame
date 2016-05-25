@@ -39,6 +39,7 @@ void labgame::Player::populate_map()
     add_to_map("use", &Player::use_item_p);
     add_to_map("unlock", &Player::unlock_p, string_target);
     add_to_map("drop", &Player::drop_p, string_target);
+    add_to_map("wait", &Actor::wait);
 }
 
 labgame::Player::Player(std::string name, int hp) : Actor(hp)

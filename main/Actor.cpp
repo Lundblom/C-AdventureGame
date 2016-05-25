@@ -15,6 +15,7 @@ namespace labgame
     Actor::Actor(int hp)
     {
         this->_hp = hp;
+        this->maxHp = hp;
     }
     
     Actor::~Actor()
@@ -46,13 +47,25 @@ namespace labgame
         this->_hp -= (damage);
         
         //Uncomment this for damage logging
-        std::cout << this->full_name() << " took " << damage <<
-        " damage from" << source << ". Health is now " << hp() << std::endl;
+        //std::cout << this->full_name() << " took " << damage <<
+        //" damage from " << source << ". Health is now " << hp() << std::endl;
         
         if(this->hp() <= 0)
         {
             this->die();   
         }
+    }
+    
+    void Actor::heal_damage(int amount, std::string source)
+    {
+        _hp += amount;
+        if(_hp > maxHp)
+        {
+            _hp = maxHp;
+        }
+        
+        std::cout << this->full_name() << " healed " << amount <<
+        " damage from " << source << ". Health is now " << hp() << std::endl;
     }
     
     void Actor::die() 
@@ -210,6 +223,11 @@ namespace labgame
         }
         std::cout << "Doesnt have item" << std::endl;
         return false;
+    }
+    
+    void Actor::wait()
+    {
+        this->current_location->wait(this);
     }
     
     void Actor::unlock(std::string dir)
