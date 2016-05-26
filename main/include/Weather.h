@@ -1,13 +1,32 @@
 #pragma once
 
-class Weather
+#include "Actor.h"
+namespace labgame
 {
-    public:
-    enum TYPES
+    class Actor;
+    class Weather
     {
-        clear,
-        rain,
-        snow,
-        hell
+        
+        public: 
+        enum TYPE
+        {
+            CLEAR,
+            RAIN,
+            SNOW,
+            ACIDRAIN,
+        };
+        private:
+        TYPE type;
+        std::string desc;
+        const static int ACID_DAMAGE;
+        public:
+        
+        Weather(TYPE);
+        
+        std::string description() const;
+        
+        void effect(Actor *);
+        
+        
     };
-};
+}

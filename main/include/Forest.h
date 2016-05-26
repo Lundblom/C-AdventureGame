@@ -16,8 +16,8 @@ namespace labgame
         
         public:
         
-        Forest(int _id);
-        Forest(int _id, std::string _desc);
+        Forest(int _id, Weather::TYPE);
+        Forest(int _id, std::string _desc, Weather::TYPE);
         
         virtual std::string description() const override;
         virtual void wait(Actor*) override;

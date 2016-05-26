@@ -15,6 +15,7 @@
 #include "Forest.h"
 #include "Weapon.h"
 #include "LockedRoom.h"
+#include "Weather.h"
 
 
 
@@ -76,7 +77,7 @@ int main() {
      world.push_back(new Room(1));
      world.push_back(new Room(2));
      world.push_back(new Room(3));
-     world.push_back(new Forest(4, "It's filled with bugs. EW!"));
+     world.push_back(new Forest(4, "It's filled with bugs. EW!", Weather::ACIDRAIN));
      world.push_back(new LockedRoom(5, "It's a room!", {{"s", "Bronze Key"}, {"e", "Bronze Key"}}));
      world.push_back(new Room(6));
      
@@ -158,8 +159,7 @@ int main() {
    while(true)
    {
        std::clog << "Actor turns" << std::endl;
-       
-       
+
        global::map_on_actors([] (Actor* a) { a->action();});
        
        player->action();

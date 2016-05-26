@@ -8,13 +8,15 @@ namespace labgame
     class OutdoorEnvironment : public Environment
     {
         private:
-       
-        
-        Weather* weather;    
+        Weather weather;    
         
         protected:
-        OutdoorEnvironment(int);
+        OutdoorEnvironment(int, Weather::TYPE);
         
         public:
+        virtual void wait(Actor* ) override;
+        virtual void enter(Actor *) override;
+        
+        virtual std::string description() const override;
     };
 }

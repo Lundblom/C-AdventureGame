@@ -210,18 +210,14 @@ namespace labgame
     
     bool Actor::has_item(std::string name) const
     {
-        std::cout << "Checking if has item " << name << std::endl;
         for (std::vector<Object* >::const_iterator i = inventory.begin();
         i != inventory.end(); ++i) 
         {
-            std::cout << "Looping once" << std::endl;
             if((*i)->Name() == name)
             {
-                std::cout << "Have item" << std::endl;
                 return true;
             }
         }
-        std::cout << "Doesnt have item" << std::endl;
         return false;
     }
     
