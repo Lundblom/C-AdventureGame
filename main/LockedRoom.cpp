@@ -3,11 +3,11 @@
 namespace labgame
 {
     LockedRoom::LockedRoom(int _id, std::string _desc,
-        std::initializer_list<std::pair<std::string, std::string>> l) : 
+        std::vector<std::pair<std::string, std::string>> l) : 
         IndoorEnvironment(_id), room_description(_desc)
     {
         max_neighbours = NEIGHBOURS;
-        for (std::initializer_list<std::pair<std::string, std::string>>
+        for (std::vector<std::pair<std::string, std::string>>
             ::const_iterator i = l.begin(); i != l.end(); ++i) 
         {
             locked_directions.push_back((*i).first);

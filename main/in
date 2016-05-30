@@ -1,6 +1,12 @@
-Forest:1,It is a nice room,CLEAR
-Weapon:1,STRONG SWORD!,5
-LockedRoom:1,Wow it is locked! Such cool.,[2,[3,4],5],6,[7,8]
+forEsT:1;It's nice here;0
+room:2;Wow, such room!
 
+TWO_WAY:1;[[e;w;2]]
 
-Forest:1,Swagger,LOL
+Troll:2;Sverker
+Troll:2;Sverkarn
+Troll:2;Sverkina
+Troll:2;Pottvald
+Troll:2;Greger
+
+PLAYER_START:1

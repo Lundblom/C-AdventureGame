@@ -7,7 +7,8 @@ namespace labgame
     class Armor : public Equippable
     {
         public:
-        enum ARMOR_TYPE{
+        enum ARMOR_TYPE
+        {
             HAT,
             ARMOR,
             BOOTS

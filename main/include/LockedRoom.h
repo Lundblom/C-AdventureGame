@@ -1,6 +1,6 @@
 #pragma once
 #include "IndoorEnvironment.h"
-#include <initializer_list>
+#include <vector>
 namespace labgame
 {
     class LockedRoom : public IndoorEnvironment
@@ -18,7 +18,7 @@ namespace labgame
         
         public:
         LockedRoom(int _id, std::string _desc,
-            std::initializer_list<std::pair<std::string, std::string>> l);
+            std::vector<std::pair<std::string, std::string>> l);
         virtual ~LockedRoom();
         
         bool unlock(Actor* a, std::string);

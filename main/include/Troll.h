@@ -1,3 +1,6 @@
+#include <string>
+#include "NPC.h"
+
 namespace labgame
 {
     class Troll : public NPC

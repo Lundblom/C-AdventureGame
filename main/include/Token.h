@@ -20,12 +20,16 @@ namespace labgame
         
         TOKENTYPE type;
         std::string data;
+        int line;
+        
+        
         
         public:
         
-        Token(TOKENTYPE t, std::string _data);
+        Token(TOKENTYPE, std::string, int);
         
         int get_type() const;
+        int get_line() const;
         
         int get_data_as_int() const;
         std::string get_data_as_string() const;

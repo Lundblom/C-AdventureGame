@@ -9,7 +9,7 @@
 void labgame::Player::die()
 {
     std::cout << "GAME OVER!" << std::endl;
-    std::exit(0);
+    quit();
 }
 
 template<class F, class... Args>
