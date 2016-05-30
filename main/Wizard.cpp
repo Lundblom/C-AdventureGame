@@ -20,11 +20,17 @@ const std::map<std::string, labgame::Spell> labgame::Wizard::all_spells = {
 
 labgame::Wizard::Wizard(std::string name, int hp) : Player(name, hp)
 {
-    known_spells.push_back("fireball");
-    known_spells.push_back("arcane bolt");
+    //known_spells.push_back("fireball");
+    //known_spells.push_back("arcane bolt");
     
     this->strength =  DEFAULT_STRENGTH;
     this->intelligence = DEFAULT_INTELLIGENCE;
+}
+
+labgame::Wizard::~Wizard()
+{
+    std::cout << "Destroying wizard" << std::endl;
+    known_spells.clear();
 }
 
 void labgame::Wizard::cast_spell(Actor* target)

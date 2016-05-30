@@ -10,6 +10,21 @@ namespace labgame
     {
     }
     
+    Environment::~Environment()
+    {
+        for (std::map<std::string, Object*>::iterator i = objects.begin();
+        i != objects.end(); ++i) 
+        {
+            delete i->second;
+        }
+        
+        objects.clear();
+        
+        neighbours.clear();
+        visitors.clear();
+        direction_translation.clear();
+    }
+    
     Environment* Environment::neighbour(std::string d) const
     {
         auto res = direction_translation.find(d);

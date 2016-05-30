@@ -35,6 +35,8 @@ namespace labgame
         
         public:
         
+        bool _quit = false;
+        
         Player(std::string, int);
         
         void add_alias(std::string, std::string);
@@ -47,6 +49,9 @@ namespace labgame
         virtual bool pick_up(std::string) override;
         
         void inspect();
+        void quit();
+        
+        void save();
         
         //Wrapper functions
         void use_item_p();

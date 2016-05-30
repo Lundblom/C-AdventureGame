@@ -40,12 +40,18 @@ void labgame::Player::populate_map()
     add_to_map("unlock", &Player::unlock_p, string_target);
     add_to_map("drop", &Player::drop_p, string_target);
     add_to_map("wait", &Actor::wait);
+    add_to_map("save", &Player::save);
+    add_to_map("quit", &Player::quit);
 }
 
 labgame::Player::Player(std::string name, int hp) : Actor(hp)
 {
     this->_name = name;
     populate_map();
+}
+void labgame::Player::quit()
+{
+    _quit = true;
 }
 
 void labgame::Player::fight(Actor* a)
@@ -145,6 +151,13 @@ void labgame::Player::go_p(std::string * t)
         return;
     }
     labgame::Actor::go(*t);
+}
+
+void labgame::Player::save()
+{
+    global::set_save();
+    std::cout << "Game will be saved after your turn is done." << std::endl;
+    command_successful = false;
 }
 
 void labgame::Player::drop_p(std::string * s)

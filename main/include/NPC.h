@@ -20,7 +20,7 @@ namespace labgame
         
         NPC(Temper,int, std::string);
         NPC();
-        ~NPC();
+        virtual ~NPC();
         
         virtual void die() override;
         

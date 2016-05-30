@@ -14,8 +14,8 @@ namespace labgame
     class Actor
     {
         private:
-        int _hp;
-        int maxHp;
+        int _hp = 0;
+        int maxHp = 0;
         
         protected:
         std::string _name;
@@ -31,8 +31,6 @@ namespace labgame
         
         std::vector<Object*> inventory;
         
-        
-        
         Environment* current_location = nullptr;
         
         Weapon* weapon = nullptr;
@@ -46,6 +44,7 @@ namespace labgame
         void melee_attack(Actor *) const;
         
         Object* find_item_in_inventory(std::string);
+        Object* find_and_delete_item_in_inventory(std::string);
         
         void equip(int);
         
@@ -53,7 +52,7 @@ namespace labgame
         
         
         Actor(int);
-        ~Actor();
+        virtual ~Actor();
         
         std::string name() const {return this->_name;}
         std::string full_name() const;

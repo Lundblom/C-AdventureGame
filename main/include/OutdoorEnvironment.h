@@ -12,6 +12,7 @@ namespace labgame
         
         protected:
         OutdoorEnvironment(int, Weather::TYPE);
+        virtual ~OutdoorEnvironment();
         
         public:
         virtual void wait(Actor* ) override;

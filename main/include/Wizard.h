@@ -23,6 +23,7 @@ namespace labgame
         static const int DEFAULT_STRENGTH;
         
         Wizard(std::string, int);
+        ~Wizard();
         
         virtual void fight(Actor *) override;
         virtual std::string type() const;

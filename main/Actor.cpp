@@ -20,10 +20,15 @@ namespace labgame
     
     Actor::~Actor()
     {
+        std::cout << "Actor is being destroyed" << std::endl;
         for (std::vector<Object*>::const_iterator i = inventory.begin();
         i != inventory.end(); ++i) 
         {
-            free (*i);
+            if(*i != nullptr)
+            {
+                delete (*i);
+            }
+            std::cout << "Destroying in inventory" << std::endl;
         }
     }
     
@@ -50,9 +55,9 @@ namespace labgame
         //std::cout << this->full_name() << " took " << damage <<
         //" damage from " << source << ". Health is now " << hp() << std::endl;
         
-        if(this->hp() <= 0)
+        if(_hp <= 0)
         {
-            this->die();   
+            this->die();
         }
     }
     
@@ -81,6 +86,8 @@ namespace labgame
         {
             current_location->drop(*i);
         }
+        
+        inventory.clear();
         
         current_location = nullptr;
         
@@ -151,9 +158,24 @@ namespace labgame
         return nullptr;
     }
     
+    Object* Actor::find_and_delete_item_in_inventory(std::string name)
+    {
+        Object* val = nullptr;
+        for (std::vector<Object*>::iterator i = inventory.begin(); 
+            i != inventory.end(); ++i) 
+        {
+            if((*i)->Name() == name)
+            {
+                val = *i;
+                inventory.erase(i);
+            }
+        }
+        return val;
+    }
+    
     void Actor::drop(std::string name)
     {
-        Object* item = find_item_in_inventory(name);
+        Object* item = find_and_delete_item_in_inventory(name);
         
         if(item == nullptr)
         {

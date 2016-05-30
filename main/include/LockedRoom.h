@@ -19,6 +19,7 @@ namespace labgame
         public:
         LockedRoom(int _id, std::string _desc,
             std::initializer_list<std::pair<std::string, std::string>> l);
+        virtual ~LockedRoom();
         
         bool unlock(Actor* a, std::string);
         

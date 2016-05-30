@@ -15,5 +15,6 @@ namespace labgame
         
         public:
         IndoorEnvironment(int);
+        virtual ~IndoorEnvironment();
     };
 }

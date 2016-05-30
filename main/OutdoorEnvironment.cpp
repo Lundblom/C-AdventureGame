@@ -8,6 +8,11 @@ namespace labgame
     {
     }
     
+    OutdoorEnvironment::~OutdoorEnvironment()
+    {
+        
+    }
+    
     void OutdoorEnvironment::wait(Actor * a)
     {
         weather.effect(a);

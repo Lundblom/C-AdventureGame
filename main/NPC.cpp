@@ -22,12 +22,12 @@ namespace labgame
     
     NPC::~NPC()
     {
-        die();
     }
     
     void NPC::die()
     {
         Actor::die();
+        
         global::remove_actor(this->name(), this);
     }
     

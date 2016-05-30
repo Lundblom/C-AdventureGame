@@ -16,6 +16,7 @@
 #include "Weapon.h"
 #include "LockedRoom.h"
 #include "Weather.h"
+#include "MapParser.h"
 
 
 
@@ -67,6 +68,11 @@ int main() {
     
     //initiate random 
     std::srand(time(NULL));
+    
+    //TEST
+    //MapParser mp("in");
+    //mp.tokenize();
+    //mp.debugPrint();
     
     int chosenClass; //use ENUM for this later
     std::string name;
@@ -150,8 +156,8 @@ int main() {
      * INITIALIZE ACTORS
      **/
      
-    Troll troll("Sven");
-    troll.move_to(world[3]);
+    Troll* troll = new Troll("Sven");
+    troll->move_to(world[3]);
    /**
     * MAIN LOOP
     * 
@@ -166,6 +172,25 @@ int main() {
        
        //Clear any leftover input
        std::cin.clear();
+       
+       if(global::should_save_be_executed())
+       {
+           //TODO: ACTUALLY SAVE
+           global::has_executed_save();
+       }
+       if(player->_quit)
+       {
+           break;
+       }
    }
-   free(player);
+   std::cout << "Trying to delete player" << std::endl;
+   delete player;
+   
+   std::cout << "Trying to delete all rooms" << std::endl;
+   for (std::vector<Environment* >::iterator i = world.begin(); 
+   i != world.end(); ++i) 
+   {
+       std::cout << "Trying a room" << std::endl;
+      delete (*i); 
+   }
 }

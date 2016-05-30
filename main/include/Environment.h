@@ -24,6 +24,7 @@ namespace labgame
         public:
         
         Environment(int);
+        virtual ~Environment();
         void add_neighbour(std::string,std::string, Environment*, bool);
         
         std::vector<std::string> directions() const;

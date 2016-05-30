@@ -8,8 +8,9 @@
 
 void labgame::Troll::die()
 {
+    std::cout << "A troll is dying!" << std::endl;
     NPC::die();
-    std::cout << "A troll died!" << std::endl;
+    
 }
 
 void labgame::Troll::action()
@@ -51,6 +52,7 @@ void labgame::Troll::action()
 
 labgame::Troll::Troll(std::string _name) : NPC(NPC::AGRESSIVE, HEALTH, _name)
 {
+    inventory.push_back(new Object("COOKIEEEE"));
 }
 
 

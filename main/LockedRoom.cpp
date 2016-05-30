@@ -16,6 +16,13 @@ namespace labgame
         }
     }
     
+    LockedRoom::~LockedRoom()
+    {
+        std::cout << "Deleteing lockedRoom" << std::endl;
+        locked_directions.clear();
+        required_items.clear();
+    }
+    
     void LockedRoom::wait(Actor* a) 
     {
         
