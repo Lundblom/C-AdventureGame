@@ -11,4 +11,14 @@ namespace labgame
     void Object::use()
     {
     }
+    
+    void Object::drop()
+    {
+        
+    }
+    
+    void Object::pick_up(Actor* a)
+    {
+        
+    }
 }

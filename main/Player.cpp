@@ -15,7 +15,7 @@ void labgame::Player::die()
 template<class F, class... Args>
 void labgame::Player::add_to_map(std::string name, F f, Args&&... args)
 {
-    command_map[name] = std::bind(f, this, std::ref(args)...);
+    command_map[name] = std::bind(f, this, std::cref(args)...);
 }
 
 void labgame::Player::help()
@@ -27,18 +27,32 @@ void labgame::Player::help()
     command_successful = false;
 }
 
+void labgame::Player::equip(int item_id)
+{
+    Object * i = inventory.at(item_id);
+    
+    if(Backpack * b = dynamic_cast<Backpack*>(i))
+    {
+        this->backpack = b;
+        return;
+    }
+    Actor::equip(item_id);
+}
+
 //Add any options the player can do here.
 void labgame::Player::populate_map()
 {
     add_to_map("fight", &Player::fight, actor_target);
     add_to_map("help", &Player::help);
     add_to_map("inspect", &Player::inspect);
-    add_to_map("go", &Player::go_p, string_target);
-    add_to_map("pickup", &Player::pick_up_p, string_target);
+    add_to_map("go", &Player::go, string_target);
+    add_to_map("pickup", &Player::pick_up, string_target);
     add_to_map("inventory", &Player::display_inventory);
-    add_to_map("use", &Player::use_item_p);
-    add_to_map("unlock", &Player::unlock_p, string_target);
-    add_to_map("drop", &Player::drop_p, string_target);
+    add_to_map("put", &Player::put_in_container, string_target, string_target2);
+    add_to_map("remove", &Player::remove_from_container, string_target, string_target2);
+    add_to_map("use", &Player::use_item_p, string_target);
+    add_to_map("unlock", &Player::unlock, string_target);
+    add_to_map("drop", &Player::drop, string_target);
     add_to_map("wait", &Actor::wait);
     add_to_map("save", &Player::save);
     add_to_map("quit", &Player::quit);
@@ -66,7 +80,7 @@ void labgame::Player::fight(Actor* a)
     std::cout << "--You have these options--" << std::endl;
 }
 
-void labgame::Player::use_item_p()
+void labgame::Player::use_item_p(std::string s)
 {
     if(inventory.size() < 1)
     {
@@ -74,27 +88,15 @@ void labgame::Player::use_item_p()
         command_successful = false;
         return;
     }
-    display_inventory();
+    /*
+    int input = 0;
     
-    std::cout << "Enter an item id(1 to " << inventory.size() << "): ";
+    std::stringstream stream(s);
     
-    int input;
-    std::cin >> input;
-    
-    while(std::cin.fail() || input < 1 || input > max_inventory_size())
+    if ( !(stream >> input) )
     {
-        std::cin.clear();
-        std::cin.ignore(256,'\n');
-        std::cout << "Not a valid option" << std::endl;
-        std::cout << "Enter an item id: ";
-        std::cin >> input;
-        std::cout << std::endl;
+        input = 0;
     }
-    std::cin.clear();
-    std::cin.ignore(256,'\n');
-    
-    std::cout << std::endl;
-    
     if(input > inventory.size())
     {
         std::cout << "No item in this slot." << std::endl;
@@ -109,7 +111,7 @@ void labgame::Player::use_item_p()
     else
     {
         Actor::use_item(input-1);
-    }
+    }*/
 }
 
 template<typename S>
@@ -143,16 +145,6 @@ void labgame::Player::add_alias(std::string alias, std::string command)
     alias_map.insert(std::pair<std::string,std::string>(alias,command));
 }
 
-void labgame::Player::go_p(std::string * t)
-{
-    if(t == nullptr)
-    {
-        command_successful = false;
-        return;
-    }
-    labgame::Actor::go(*t);
-}
-
 void labgame::Player::save()
 {
     global::set_save();
@@ -160,36 +152,6 @@ void labgame::Player::save()
     command_successful = false;
 }
 
-void labgame::Player::drop_p(std::string * s)
-{
-    if(s == nullptr)
-    {
-        command_successful = false;
-        return;
-    }
-    drop(*s);
-}
-
-void labgame::Player::pick_up_p(std::string * s)
-{
-    if(s == nullptr)
-    {
-        command_successful = false;
-        return;
-    }
-    Player::pick_up(*s);
-}
-
-void labgame::Player::unlock_p(std::string* s)
-{
-    if(s == nullptr)
-    {
-        command_successful = false;
-        return;
-    }
-    std::cout << "IN  P unlock" << std::endl;
-    Player::unlock(*s);
-}
 
 void labgame::Player::display_inventory() const
 {
@@ -290,6 +252,7 @@ void labgame::Player::action()
         
         std::string input1 = "";
         std::string input2 = "";
+        std::string input3 = "";
         
         int i = 0;
         char currentChar;
@@ -299,9 +262,15 @@ void labgame::Player::action()
             i++;
         }
         while(input[i] == ' '){i++;}
-        while((currentChar = input[i]) != '\0')
+        while((currentChar = input[i]) != ' ' && input[i] != '\0')
         {
             input2 += currentChar;
+            i++;
+        }
+        while(input[i] == ' '){i++;}
+        while((currentChar = input[i]) != '\0')
+        {
+            input3 += currentChar;
             i++;
         }
         
@@ -330,20 +299,19 @@ void labgame::Player::action()
                 }
             }
         }
-        
-        
-            
         if(input2 != "")
         {
             actor_target = global::get_actor(input2);
-            string_target = &input2;
+            string_target = input2;
+            string_target2 = input3;
         }
         
         //Executes the selected function
         it1->second();
         
         actor_target = nullptr;
-        string_target = nullptr;
+        string_target = "";
+        string_target2 = "";
         
         if(!command_successful)
         {

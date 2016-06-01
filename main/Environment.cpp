@@ -76,6 +76,7 @@ namespace labgame
     
     void Environment::drop(Object* o)
     {
+        o->drop();
         objects.insert({o->Name(), o});
     }
     

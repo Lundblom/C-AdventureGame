@@ -1,12 +1,10 @@
 forEsT:1;It's nice here;0
-room:2;Wow, such room!
+room:2;INCREDIBLE ROOM!
 
 TWO_WAY:1;[[e;w;2]]
 
 Troll:2;Sverker
-Troll:2;Sverkarn
-Troll:2;Sverkina
-Troll:2;Pottvald
-Troll:2;Greger
+
+Backpack:2;Superpack;10;2;0;0;0;0;0
 
 PLAYER_START:1

@@ -3,7 +3,7 @@
 namespace labgame
 {
     Weapon::Weapon(std::string _name, int _damage) :
-        Equippable(_name), damage(_damage)
+        Object(_name), Equippable(_name), damage(_damage)
     {
         
     }

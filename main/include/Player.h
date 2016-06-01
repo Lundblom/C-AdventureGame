@@ -3,6 +3,7 @@
 #include <functional>
 #include "Object.h"
 #include "Actor.h"
+#include "Backpack.h"
 namespace labgame
 {
     class Player : public Actor
@@ -11,11 +12,13 @@ namespace labgame
         
         std::map<std::string, std::function<void()>> command_map;
         std::map<std::string, std::string> alias_map;
+        Backpack * backpack;
 
         void help();
         
         Actor * actor_target;
-        std::string * string_target;
+        std::string string_target;
+        std::string string_target2;
         
         template<class F, class... Args>
         void add_to_map(std::string name, F f, Args&&... args);
@@ -32,6 +35,8 @@ namespace labgame
         
         
         void display_inventory() const;
+        
+        virtual void equip(int) override;
         
         public:
         
@@ -54,11 +59,10 @@ namespace labgame
         void save();
         
         //Wrapper functions
-        void use_item_p();
-        void go_p(std::string*);
-        void pick_up_p(std::string*);
-        void unlock_p(std::string*);
-        void drop_p(std::string*);
+        void use_item_p(std::string s);
+        
+        void add_to_container_p(std::string*);
+        void remove_from_container_p(std::string*);
         
         void talk_to(Actor *);
         

@@ -12,4 +12,9 @@ namespace labgame
     {
         
     }
+    
+    Equippable::Equippable(std::string _name, int _strength, int _dexterity, int _constitution, int _intelligence, int _wisdom, int _charisma) : Object(_name)
+    {
+        
+    }
 }

@@ -46,7 +46,7 @@ namespace labgame
         Object* find_item_in_inventory(std::string);
         Object* find_and_delete_item_in_inventory(std::string);
         
-        void equip(int);
+        virtual void equip(int);
         
         public:
         
@@ -67,6 +67,8 @@ namespace labgame
         bool inventory_is_full() const;
         bool is_equippable(int) const;
         bool has_item(std::string) const;
+        
+        bool put_item(Object*);
 
         void use_ability(std::function<void(Actor*)>, Actor *);
     
@@ -75,7 +77,8 @@ namespace labgame
         
         void move_to(Environment*);
         
-        
+        void put_in_container(std::string, std::string);
+        void remove_from_container(std::string, std::string);
         
         //Define these as pure if needed
         virtual int bonus_damage() const { return 0;}

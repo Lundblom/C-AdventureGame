@@ -2,18 +2,19 @@
 #include "Object.h"
 namespace labgame
 {
-    class Equippable : public Object
+    class Equippable : public virtual Object
     {
         private:
-        int strength = 0;
-        int dexterity = 0;
-        int constitution = 0;
-        int intelligence = 0;
-        int wisdom = 0;
-        int charisma = 0;
+        const int strength = 0;
+        const int dexterity = 0;
+        const int constitution = 0;
+        const int intelligence = 0;
+        const int wisdom = 0;
+        const int charisma = 0;
         
         public:
         Equippable(std::string);
+        Equippable(std::string, int, int, int, int, int, int);
         
         int Strength() const {return strength;}
         int Dexterity() const {return dexterity;}

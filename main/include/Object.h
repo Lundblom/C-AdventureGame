@@ -1,9 +1,11 @@
-#include <string>
 #pragma once
+#include <string>
 namespace labgame
 {
+    class Actor;
     class Object
     {
+        
         private:
         
         std::string name;
@@ -16,5 +18,7 @@ namespace labgame
         inline bool is_useable() const {return this->useable;}
         
         virtual void use();
+        virtual void pick_up(Actor*);
+        virtual void drop();
     };
 }

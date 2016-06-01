@@ -28,6 +28,8 @@ namespace labgame
     const std::string MapParser::OBJECT_NAME = "object";
     const std::string MapParser::WEAPON_NAME = "weapon";
     const std::string MapParser::ARMOR_NAME = "armor";
+    const std::string MapParser::CONTAINER_NAME = "container";
+    const std::string MapParser::BACKPACK_NAME = "backpack";
     
     const std::string MapParser::TROLL_NAME = "troll";
     
@@ -220,6 +222,39 @@ namespace labgame
                     
                     o = new Armor(name_token.get_data_as_string(), armor_token.get_data_as_int(), type);
                 }
+                else if(specifier_data == CONTAINER_NAME)
+                {
+                    Token size_token = pop();
+                    assert_token(size_token, Token::INT);
+                    
+                    o = new Container(name_token.get_data_as_string(), size_token.get_data_as_int());
+                }
+                else if(specifier_data == BACKPACK_NAME)
+                {
+                    Token size_token = pop();
+                    assert_token(size_token, Token::INT);
+                    Token strength_token = pop();
+                    assert_token(strength_token, Token::INT);
+                    Token dexterity_token = pop();
+                    assert_token(dexterity_token, Token::INT);
+                    Token constitution_token = pop();
+                    assert_token(constitution_token, Token::INT);
+                    Token intelligence_token = pop();
+                    assert_token(intelligence_token, Token::INT);
+                    Token wisdom_token = pop();
+                    assert_token(wisdom_token, Token::INT);
+                    Token charisma_token = pop();
+                    assert_token(charisma_token, Token::INT);
+                    
+                    int strength = strength_token.get_data_as_int();
+                    int dexterity = dexterity_token.get_data_as_int();
+                    int constitution = constitution_token.get_data_as_int();
+                    int intelligence = intelligence_token.get_data_as_int();
+                    int wisdom = wisdom_token.get_data_as_int();
+                    int charisma = charisma_token.get_data_as_int();
+                    
+                    o = new Backpack(name_token.get_data_as_string(), size_token.get_data_as_int(), strength, dexterity, constitution, intelligence, wisdom, charisma);
+                }
                 
                 (*world)[id-1]->add_item(o);
             }
@@ -361,7 +396,7 @@ namespace labgame
     
     bool MapParser::is_object(std::string& name) const
     {
-        if(name == OBJECT_NAME || name == WEAPON_NAME || name == ARMOR_NAME)
+        if(name == OBJECT_NAME || name == WEAPON_NAME || name == ARMOR_NAME || name == BACKPACK_NAME || name == CONTAINER_NAME)
         {
             return true;
         }

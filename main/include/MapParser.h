@@ -22,6 +22,8 @@ namespace labgame
         static const std::string OBJECT_NAME;
         static const std::string WEAPON_NAME;
         static const std::string ARMOR_NAME;
+        static const std::string CONTAINER_NAME;
+        static const std::string BACKPACK_NAME;
         
         static const std::string TROLL_NAME;
         

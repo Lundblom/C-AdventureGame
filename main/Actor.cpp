@@ -7,6 +7,7 @@
 #include "Actor.h"
 #include "Equippable.h"
 #include "LockedRoom.h"
+#include "Container.h"
 
 
 namespace labgame
@@ -93,6 +94,43 @@ namespace labgame
         
     }
     
+    void Actor::put_in_container(std::string t, std::string s)
+    {
+        Object * o = find_item_in_inventory(s);
+        Object * ot = find_item_in_inventory(t);
+        if(o == nullptr || ot == nullptr)
+        {
+            std::cout << "didnt find " << s << " or " << t << std::endl;
+            return;
+        }
+        
+        std::clog << "Found " << o->Name() << "   " << ot->Name() << std::endl;
+        
+        if(Container * c = dynamic_cast<Container*>(o))
+        {
+                bool success = c->add_item(ot);
+               
+                if(success)
+                {
+                    find_and_delete_item_in_inventory(t);
+                }
+        }
+    }
+    
+    void Actor::remove_from_container(std::string t, std::string s)
+    {
+        Object * o = find_item_in_inventory(s);
+        if(o == nullptr)
+        {
+            return;
+        }
+        
+        if(Container * c = dynamic_cast<Container *>(o))
+        {
+               c->remove(t);
+        }
+    }
+    
     std::string Actor::full_name() const
     {
         return this->name() + " the " + this->type();
@@ -161,13 +199,18 @@ namespace labgame
     Object* Actor::find_and_delete_item_in_inventory(std::string name)
     {
         Object* val = nullptr;
+        std::clog << "in find and delete, looping" << std::endl;
         for (std::vector<Object*>::iterator i = inventory.begin(); 
             i != inventory.end(); ++i) 
         {
+            std::clog << "loop" << std::endl;
             if((*i)->Name() == name)
             {
+                std::clog << "found name, dereferencing" << std::endl;
                 val = *i;
+                std::clog << "erasing" << std::endl;
                 inventory.erase(i);
+                break;
             }
         }
         return val;
@@ -224,10 +267,10 @@ namespace labgame
         {
             current_location->pick_up(s);
             inventory.push_back(std::move(i));
+            i->pick_up(this);
             return true;
         }
         return false;
-        
     }
     
     bool Actor::has_item(std::string name) const
@@ -239,6 +282,16 @@ namespace labgame
             {
                 return true;
             }
+        }
+        return false;
+    }
+    
+    bool Actor::put_item(Object* o)
+    {
+        if(!inventory_is_full())
+        {
+            inventory.push_back(o);
+            return true;
         }
         return false;
     }
