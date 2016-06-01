@@ -46,7 +46,8 @@ namespace labgame
         Object* find_item_in_inventory(std::string);
         Object* find_and_delete_item_in_inventory(std::string);
         
-        virtual void equip(int);
+        virtual void equip(std::string);
+        virtual void unequip(std::string);
         
         public:
         
@@ -65,7 +66,7 @@ namespace labgame
         void heal_damage(int, std::string);
         
         bool inventory_is_full() const;
-        bool is_equippable(int) const;
+        bool is_equippable(Object*) const;
         bool has_item(std::string) const;
         
         bool put_item(Object*);
@@ -73,7 +74,7 @@ namespace labgame
         void use_ability(std::function<void(Actor*)>, Actor *);
     
         void unlock(std::string dir);    
-        void use_item(int);
+        void use_item(std::string);
         
         void move_to(Environment*);
         

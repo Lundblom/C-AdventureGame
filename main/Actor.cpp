@@ -136,10 +136,10 @@ namespace labgame
         return this->name() + " the " + this->type();
     }
     
-    void Actor::equip(int item_id)
+    void Actor::equip(std::string s)
     {
         //Will throw error if id is invalid
-        Object* item = inventory.at(item_id); 
+        Object* item = find_item_in_inventory(s);
         
         if(Weapon* w = dynamic_cast<Weapon*>(item))
         {
@@ -165,6 +165,34 @@ namespace labgame
         else if(Equippable* e = dynamic_cast<Equippable*>(item))
         {
             this->extra = e;
+        }
+    }
+    
+    void Actor::unequip(std::string s)
+    {
+        Object * item = find_item_in_inventory(s);
+        
+        std::clog << "Checking " << item->Name() << std::endl;
+        
+        if(item == weapon)
+        {
+            weapon = nullptr;
+        }
+        else if(item == armor)
+        {
+            armor = nullptr;
+        }
+        else if(item == boots)
+        {
+            boots = nullptr;
+        }
+        else if(item = hat)
+        {
+            hat = nullptr;
+        }
+        else if (item == extra)
+        {
+            extra = nullptr;
         }
     }
     
@@ -320,24 +348,20 @@ namespace labgame
         }
     }
     
-    void Actor::use_item(int item_id)
+    void Actor::use_item(std::string s)
     {
-        std::cout << "Using item " << item_id << std::endl;
-        if (item_id > this->inventory.size() - 1 || item_id < 0)
+        Object * o = find_item_in_inventory(s);
+        if(o == nullptr)
         {
             return;
         }
-        this->inventory[item_id]->use();
+        
+        o->use();
     }
     
-    bool Actor::is_equippable(int item_id) const
+    bool Actor::is_equippable(Object * o) const
     {
-        std::cout << "Checking if equippable" << std::endl;
-        if(item_id < 0 || item_id > inventory.size()-1)
-        {
-            throw std::out_of_range("Too big id in is_equippable");
-        }
-        Equippable* e = dynamic_cast<Equippable *>(inventory.at(item_id));
+        Equippable* e = dynamic_cast<Equippable *>(o);
         return (e!=nullptr);
     }
     

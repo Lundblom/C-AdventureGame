@@ -27,16 +27,30 @@ void labgame::Player::help()
     command_successful = false;
 }
 
-void labgame::Player::equip(int item_id)
+void labgame::Player::equip(std::string s)
 {
-    Object * i = inventory.at(item_id);
+    Object * i = find_item_in_inventory(s);
     
     if(Backpack * b = dynamic_cast<Backpack*>(i))
     {
         this->backpack = b;
         return;
     }
-    Actor::equip(item_id);
+    std::clog << i->Name() << " is not a backpack" <<  std::endl;
+    Actor::equip(s);
+}
+
+void labgame::Player::unequip(std::string s)
+{
+    Object * i = find_item_in_inventory(s);
+    command_successful = false;
+    
+    if(i == backpack)
+    {
+        backpack = nullptr;
+        return;
+    }
+    Actor::unequip(s);
 }
 
 //Add any options the player can do here.
@@ -50,7 +64,8 @@ void labgame::Player::populate_map()
     add_to_map("inventory", &Player::display_inventory);
     add_to_map("put", &Player::put_in_container, string_target, string_target2);
     add_to_map("remove", &Player::remove_from_container, string_target, string_target2);
-    add_to_map("use", &Player::use_item_p, string_target);
+    add_to_map("use", &Player::use_item, string_target);
+    add_to_map("unequip", &Player::unequip, string_target);
     add_to_map("unlock", &Player::unlock, string_target);
     add_to_map("drop", &Player::drop, string_target);
     add_to_map("wait", &Actor::wait);
@@ -80,7 +95,7 @@ void labgame::Player::fight(Actor* a)
     std::cout << "--You have these options--" << std::endl;
 }
 
-void labgame::Player::use_item_p(std::string s)
+void labgame::Player::use_item(std::string s)
 {
     if(inventory.size() < 1)
     {
@@ -88,7 +103,7 @@ void labgame::Player::use_item_p(std::string s)
         command_successful = false;
         return;
     }
-    /*
+    
     int input = 0;
     
     std::stringstream stream(s);
@@ -104,14 +119,16 @@ void labgame::Player::use_item_p(std::string s)
         return;
     }
     
-    if(is_equippable(input-1))
+    Object * o = find_item_in_inventory(s);
+    
+    if(is_equippable(o))
     {
-        Actor::equip(input-1);
+        Player::equip(s);
     }
     else
     {
-        Actor::use_item(input-1);
-    }*/
+        Actor::use_item(s);
+    }
 }
 
 template<typename S>
@@ -167,7 +184,7 @@ void labgame::Player::display_inventory() const
         for (auto i = inventory.begin(); i != inventory.end(); ++i) 
         {
             std::string star;
-            if(*i == weapon or *i == armor or *i == hat or *i == boots or *i == extra)
+            if(*i == weapon or *i == armor or *i == hat or *i == boots or *i == extra or *i == backpack)
             {
                 star = " *";
             }

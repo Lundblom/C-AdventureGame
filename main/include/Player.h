@@ -12,7 +12,7 @@ namespace labgame
         
         std::map<std::string, std::function<void()>> command_map;
         std::map<std::string, std::string> alias_map;
-        Backpack * backpack;
+        Backpack * backpack = nullptr;
 
         void help();
         
@@ -36,7 +36,8 @@ namespace labgame
         
         void display_inventory() const;
         
-        virtual void equip(int) override;
+        virtual void equip(std::string) override;
+        virtual void unequip(std::string) override;
         
         public:
         
@@ -58,9 +59,8 @@ namespace labgame
         
         void save();
         
-        //Wrapper functions
-        void use_item_p(std::string s);
         
+        void use_item(std::string s);
         void add_to_container_p(std::string*);
         void remove_from_container_p(std::string*);
         
