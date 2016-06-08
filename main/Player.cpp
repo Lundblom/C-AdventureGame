@@ -36,7 +36,6 @@ void labgame::Player::equip(std::string s)
         this->backpack = b;
         return;
     }
-    std::clog << i->Name() << " is not a backpack" <<  std::endl;
     Actor::equip(s);
 }
 
@@ -62,14 +61,14 @@ void labgame::Player::populate_map()
     add_to_map("go", &Player::go, string_target);
     add_to_map("pickup", &Player::pick_up, string_target);
     add_to_map("inventory", &Player::display_inventory);
-    add_to_map("put", &Player::put_in_container, string_target, string_target2);
-    add_to_map("remove", &Player::remove_from_container, string_target, string_target2);
+    add_to_map("put", &Player::put_in_container, split1, "");
+    add_to_map("remove", &Player::remove_from_container, split1, "");
     add_to_map("use", &Player::use_item, string_target);
     add_to_map("unequip", &Player::unequip, string_target);
     add_to_map("unlock", &Player::unlock, string_target);
     add_to_map("drop", &Player::drop, string_target);
     add_to_map("wait", &Actor::wait);
-    add_to_map("save", &Player::save);
+    add_to_map("save", &Player::save, string_target);
     add_to_map("quit", &Player::quit);
 }
 
@@ -93,6 +92,61 @@ void labgame::Player::fight(Actor* a)
     }
     std::cout << "You fight " << a->type() << std::endl;
     std::cout << "--You have these options--" << std::endl;
+}
+
+void labgame::Player::put_in_container(std::string t, std::string)
+{
+    if(inventory.size() == 0)
+    {
+        std::cout << "Inventory is empty" << std::endl;
+        return;
+    }
+    std::cout << "Put what in " << t << "?" << std::endl;
+    
+    display_inventory();
+    
+    std::string input;
+    std::cout << ">";
+    
+    std::getline(std::cin, input);
+    std::cout << std::endl;
+    
+    Actor::put_in_container(t, input);
+}
+
+void labgame::Player::remove_from_container(std::string t, std::string)
+{
+    if(inventory.size() == 0)
+    {
+        std::cout << "Inventory is empty" << std::endl;
+        return;
+    }
+    
+    Object * o = find_item_in_inventory(t);
+    
+    
+    if(o == nullptr)
+    {
+        std::cout << "Cant find " << t << " in inventory" << std::endl;
+        return;
+    }
+    
+    Container * c = dynamic_cast<Container*>(o);
+    if(c == nullptr)
+    {
+        std::cout << o->Name() << " is not a container" << std::endl;
+        return;
+    }
+    
+    std::cout << "Remove what from " << t << "?" << std::endl;
+    
+    std::cout << c->get_items_as_text();
+    
+    std::string input;
+    
+    std::getline(std::cin, input);
+    
+    Actor::remove_from_container(t, input);
 }
 
 void labgame::Player::use_item(std::string s)
@@ -162,11 +216,15 @@ void labgame::Player::add_alias(std::string alias, std::string command)
     alias_map.insert(std::pair<std::string,std::string>(alias,command));
 }
 
-void labgame::Player::save()
+void labgame::Player::save(std::string filename)
 {
-    global::set_save();
-    std::cout << "Game will be saved after your turn is done." << std::endl;
-    command_successful = false;
+    if(filename == "")
+    {
+        std::cout << "No filename specified" << std::endl;
+        command_successful = false;
+        return;
+    }
+    global::save(filename);
 }
 
 
@@ -269,7 +327,6 @@ void labgame::Player::action()
         
         std::string input1 = "";
         std::string input2 = "";
-        std::string input3 = "";
         
         int i = 0;
         char currentChar;
@@ -279,18 +336,11 @@ void labgame::Player::action()
             i++;
         }
         while(input[i] == ' '){i++;}
-        while((currentChar = input[i]) != ' ' && input[i] != '\0')
+        while((currentChar = input[i]) != '\0')
         {
             input2 += currentChar;
             i++;
         }
-        while(input[i] == ' '){i++;}
-        while((currentChar = input[i]) != '\0')
-        {
-            input3 += currentChar;
-            i++;
-        }
-        
         std::transform(input1.begin(), input1.end(), input1.begin(), ::tolower);
         
             
@@ -318,9 +368,14 @@ void labgame::Player::action()
         }
         if(input2 != "")
         {
+            
+            //set split values
+            std::istringstream iss(input2);
+            std::getline(iss, split1, ' ');
+            std::getline(iss, split2, ' ');
+            
             actor_target = global::get_actor(input2);
             string_target = input2;
-            string_target2 = input3;
         }
         
         //Executes the selected function
@@ -328,7 +383,6 @@ void labgame::Player::action()
         
         actor_target = nullptr;
         string_target = "";
-        string_target2 = "";
         
         if(!command_successful)
         {

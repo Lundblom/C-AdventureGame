@@ -2,6 +2,8 @@
 #include <typeinfo>
 #include <sstream>
 #include "Environment.h"
+#include "Backpack.h"
+#include "MapParser.h"
 
 
 namespace labgame
@@ -12,8 +14,7 @@ namespace labgame
     
     Environment::~Environment()
     {
-        for (std::map<std::string, Object*>::iterator i = objects.begin();
-        i != objects.end(); ++i) 
+        for (auto i = objects.begin(); i != objects.end(); ++i) 
         {
             delete i->second;
         }
@@ -87,7 +88,6 @@ namespace labgame
     
     void Environment::enter(Actor * a)
     {
-        std::clog << "Adding actor " << a->full_name() << " to id " << id << std::endl;
         visitors.push_back(a);
     }
 
@@ -106,7 +106,6 @@ namespace labgame
     
     void Environment::leave(Actor * a)
     {
-        std::clog << a->full_name() << " is leaving " << id << " , size of visitors is " << visitors.size() << std::endl;
         for(std::vector<Actor *>::iterator it = visitors.begin(); it != visitors.end(); it++)
         {
             if(*it == a)
@@ -152,7 +151,6 @@ namespace labgame
     
     Actor* Environment::get_first_visitor_of_type(std::string type) const
     {
-        std::clog << "Looking for " << type << " in room " << id << " with visitors size " << visitors.size() << std::endl;
         for(std::vector<Actor* >::const_iterator it = visitors.begin(); 
             it != visitors.end(); ++it) 
         {
@@ -184,6 +182,67 @@ namespace labgame
             return nullptr;
         }
         return it->second;
+    }
+    
+    std::string Environment::get_actors_as_serializable() const
+    {
+        std::string result = "";
+        for (auto i = visitors.begin(); i != visitors.end(); ++i) 
+        {
+            result += (*i)->get_as_serializable();
+            result += "\n";
+        }
+        return result;
+    }
+    
+    std::string Environment::get_objects_as_serializable() const
+    {
+        std::string result;
+        for (auto i = objects.begin(); i != objects.end(); ++i) 
+        {
+            result += (*i).second->get_as_serializable(std::to_string(get_id()));
+        }
+        for (auto i = visitors.begin(); i != visitors.end(); ++i) 
+        {
+            result += (*i)->get_inventory_as_serializable();
+        }
+        return result;
+    }
+    
+    std::string Environment::get_links_as_serializable() const
+    {
+        std::string result = MapParser::ONE_WAY_NAME;
+        
+        result += MapParser::SPECIFIER_DELIMETER;
+        result += std::to_string(get_id());
+        result += MapParser::DELIMETER;
+        result += MapParser::ARRAY_START;
+        
+        bool first = true;;
+        for (auto i = direction_translation.begin(); i != direction_translation.end(); ++i) 
+        {
+            if(first)
+            {
+                first = false;
+            }
+            else
+            {
+                result += MapParser::DELIMETER;
+            }
+            std::string forwardDir = i->first;
+            std::string targetId = std::to_string(neighbour(forwardDir)->get_id());
+            
+            result += MapParser::ARRAY_START;
+            result += forwardDir;
+            result += MapParser::DELIMETER;
+            result += targetId;
+            result += MapParser::ARRAY_END;
+
+        }
+        
+        result += MapParser::ARRAY_END;
+        
+        return result;
     }
 
     void Environment::add_item(Object * o)

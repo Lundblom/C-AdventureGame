@@ -24,11 +24,11 @@ namespace labgame
         const static std::string SNOW_DESC;
         const static std::string ACIDRAIN_DESC;
         public:
-        
         Weather(TYPE);
         ~Weather();
         
         std::string description() const;
+        int get_weather_number() const;
         
         void effect(Actor *);
         

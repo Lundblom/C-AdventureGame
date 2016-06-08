@@ -1,0 +1,13 @@
+forest:1;It's nice here;0
+room:2;INCREDIBLE ROOM!
+one_way:1;[[e;2]]
+one_way:2;[[w;1]]
+wizard:Sverkersson;34;4;[fireball;arcane bolt]
+troll:1;Sverker;10
+healthpotion:Sverkersson;hp;15;1
+
+object:Sverker;COOKIEEEE;
+
+
+
+player_start:1

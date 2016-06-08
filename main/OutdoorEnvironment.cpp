@@ -13,6 +13,11 @@ namespace labgame
         
     }
     
+    int OutdoorEnvironment::get_weather_number() const
+    {
+        return weather.get_weather_number();
+    }
+    
     void OutdoorEnvironment::wait(Actor * a)
     {
         weather.effect(a);
@@ -20,6 +25,7 @@ namespace labgame
     
     void OutdoorEnvironment::enter(Actor * a)
     {
+        Environment::enter(a);
         weather.effect(a);
     }
     

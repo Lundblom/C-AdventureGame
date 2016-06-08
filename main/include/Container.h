@@ -9,23 +9,20 @@ namespace labgame
     {
         private:
         std::vector<Object*> inventory;
-        Actor* owner;
         int _size = 0;
         
         const int max_size = 0;
         
         public:
         Container(std::string, int);
+        virtual ~Container();
         
         bool add_item(Object*);
         bool remove(std::string);
         
         int size() const;
-        
-        virtual void pick_up(Actor *);
-        
         std::string get_items_as_text() const;
-        virtual void drop();
+        virtual std::string get_as_serializable(std::string) const override;
         
     };
 }

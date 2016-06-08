@@ -1,6 +1,7 @@
 #include "Container.h"
 #include "Object.h"
 #include "Actor.h"
+#include "MapParser.h"
 #include <iostream>
 
 namespace labgame
@@ -9,6 +10,27 @@ namespace labgame
     Container::Container(std::string _name, int size) : Object(_name), max_size(size)
     {
         
+    }
+    
+    Container::~Container()
+    {
+        for (auto i = inventory.begin(); i != inventory.end(); ++i) 
+        {
+            delete (*i);
+        }
+    }
+    
+    std::string Container::get_as_serializable(std::string location) const
+    {
+        std::string result;
+        result += MapParser::CONTAINER_NAME;
+        result += MapParser::SPECIFIER_DELIMETER;
+        result += location;
+        result += MapParser::DELIMETER;
+        result += Name();
+        result += MapParser::DELIMETER;
+        result += size();
+        return result;
     }
     
     bool Container::add_item(Object* o)
@@ -25,13 +47,9 @@ namespace labgame
         return false;
     }
     
-    void Container::pick_up(Actor* a)
-    {
-        owner = a;
-    }
-    
     bool Container::remove(std::string name)
     {
+        
         if(owner == nullptr)
         {
             return false;
@@ -46,7 +64,10 @@ namespace labgame
             if((*i)->Name() == name)
             {
                 successful = owner->put_item(*i);
-                inventory.erase(i);
+                if(successful)
+                {
+                    inventory.erase(i);
+                }
                 break;
             }
         }
@@ -64,11 +85,6 @@ namespace labgame
             result += "\n";
         }
         return result;
-    }
-    
-    void Container::drop()
-    {
-        this->owner = nullptr;
     }
     
     

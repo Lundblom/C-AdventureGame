@@ -8,6 +8,7 @@ namespace labgame
     class Actor;
     class Environment
     {
+        friend class MapSaver;
         private:
         
         std::vector<Environment* > neighbours;
@@ -46,6 +47,11 @@ namespace labgame
 
         virtual bool can_enter (Actor*, std::string);
         virtual bool can_leave (Actor*, std::string);
+        
+        virtual std::string get_as_serializable() const = 0;
+        std::string get_objects_as_serializable() const;
+        std::string get_actors_as_serializable() const;
+        std::string get_links_as_serializable() const;
         
         virtual void enter(Actor*);
         virtual void leave(Actor*);

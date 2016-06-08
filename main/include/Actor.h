@@ -7,15 +7,18 @@
 #include "Environment.h"
 #include "Weapon.h"
 #include "Armor.h"
-
 namespace labgame
 {
     class Environment;
     class Actor
     {
+        friend class MapParser;
         private:
         int _hp = 0;
         int maxHp = 0;
+        
+        void set_hp(int hp);
+        
         
         protected:
         std::string _name;
@@ -51,6 +54,8 @@ namespace labgame
         
         public:
         
+        virtual std::string get_as_serializable() const = 0;
+        std::string get_inventory_as_serializable() const;
         
         Actor(int);
         virtual ~Actor();
@@ -60,6 +65,8 @@ namespace labgame
         virtual std::string type() const = 0;
         virtual std::string comparable_type() const = 0;
         int hp() const {return this->_hp;}
+        
+        Environment * get_location() const;
         
         virtual int max_inventory_size() const;
         void take_damage(int, std::string);

@@ -5,12 +5,11 @@
 #include "NPC.h"
 #include "Troll.h"
 #include "Player.h"
+#include "MapParser.h"
 
 void labgame::Troll::die()
 {
-    std::cout << "A troll is dying!" << std::endl;
     NPC::die();
-    
 }
 
 void labgame::Troll::action()
@@ -35,7 +34,6 @@ void labgame::Troll::action()
     }
     
     Actor * p = current_location->get_first_visitor_of_type("Player");
-    std::clog << "Got player as " << p << std::endl;
     
     if(p != nullptr)
     {
@@ -55,6 +53,19 @@ labgame::Troll::Troll(std::string _name) : NPC(NPC::AGRESSIVE, HEALTH, _name)
     inventory.push_back(new Object("COOKIEEEE"));
 }
 
+std::string labgame::Troll::get_as_serializable() const
+{
+    std::string result = "";
+    result += MapParser::TROLL_NAME;
+    result += MapParser::SPECIFIER_DELIMETER;
+    result += std::to_string(current_location->get_id());
+    result += MapParser::DELIMETER;
+    result += name();
+    result += MapParser::DELIMETER;
+    result += std::to_string(hp());
+    
+    return result;
+}
 
 std::string labgame::Troll::type() const
 {

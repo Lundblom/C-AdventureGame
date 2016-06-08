@@ -1,4 +1,5 @@
 #include "LockedRoom.h"
+#include "MapParser.h"
 
 namespace labgame
 {
@@ -11,14 +12,12 @@ namespace labgame
             ::const_iterator i = l.begin(); i != l.end(); ++i) 
         {
             locked_directions.push_back((*i).first);
-            std::cout << "inserting " << i->first << " " << i->second << std::endl;
             required_items.insert(*i);
         }
     }
     
     LockedRoom::~LockedRoom()
     {
-        std::cout << "Deleteing lockedRoom" << std::endl;
         locked_directions.clear();
         required_items.clear();
     }
@@ -26,6 +25,32 @@ namespace labgame
     void LockedRoom::wait(Actor* a) 
     {
         
+    }
+    
+    std::string LockedRoom::get_as_serializable() const
+    {
+        std::string result;
+        
+        result += MapParser::LOCKEDROOM_NAME;
+        result += MapParser::SPECIFIER_DELIMETER;
+        result += get_id();
+        result += MapParser::DELIMETER;
+        result += MapParser::ARRAY_START;
+        for (auto i = locked_directions.begin(); i != locked_directions.end(); ++i) 
+        {
+            auto j = required_items.find(*i);
+            if(j != required_items.end())
+            {
+                result += MapParser::ARRAY_START;
+                result += j->first;
+                result += MapParser::DELIMETER;
+                result += j->second;
+                result += MapParser::ARRAY_END;
+            }
+        }
+        result += MapParser::ARRAY_END;
+        
+        return result;
     }
     
     bool LockedRoom::unlock(Actor* a, std::string dir)

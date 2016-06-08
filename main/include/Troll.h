@@ -25,6 +25,8 @@ namespace labgame
         public:
         Troll(std::string);
         
+        virtual std::string get_as_serializable() const override;
+        
         void action() override;
         virtual std::string type() const override;
         

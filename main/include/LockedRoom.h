@@ -28,6 +28,8 @@ namespace labgame
         
         virtual std::string description() const override;
         
+        virtual std::string get_as_serializable() const override;
+        
         virtual bool can_enter(Actor*, std::string) override;
         virtual bool can_leave(Actor*, std::string) override;
         virtual void wait(Actor*) override;

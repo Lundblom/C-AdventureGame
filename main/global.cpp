@@ -4,15 +4,22 @@ namespace labgame
 {
     std::map<std::string, Actor *> global::actor_map;
     bool global::_save = false;
+    std::string global::_filename;
     
     void global::add_actor(std::string name, Actor * a)
     {
         actor_map[name] = a;
     }
     
-    void global::set_save()
+    void global::save(std::string filename)
     {
         _save = true;
+        _filename = filename;
+    }
+    
+    std::string global::save_filename()
+    {
+        return _filename;
     }
     
     void global::has_executed_save()

@@ -17,11 +17,8 @@
 #include "LockedRoom.h"
 #include "Weather.h"
 #include "MapParser.h"
+#include "MapSaver.h"
 
-
-
-//Global command map
-std::vector<labgame::Environment*> world;
 
 
 using namespace labgame; 
@@ -69,82 +66,101 @@ int main() {
     //initiate random 
     std::srand(time(NULL));
     
-    Player* player;
+    std::cout << "\033[1;33mWELCOME TO A DUNGEON CRAWLER\033[0m\n\n";
     
-    //TEST
-    MapParser mp("in", &world, player);
-    mp.tokenize();
-    mp.evaluate();
-    
-    int player_start = mp.get_player_start();
-    
+    std::vector<labgame::Environment*> world;
+    std::string modeChoice;
+    Player* player = nullptr;
     int chosenClass; //use ENUM for this later
     std::string name;
-
-    //LABEL
-    chooseClass:
     
-    std::cout << "Choose your class" << std::endl;
-    std::cout << "1. Wizard" << std::endl;
-    std::cout << "Choose one: ";
-    
-    int choice;
-    std::cin >> choice;
-    std::cout << std::endl;
-    
-    while(std::cin.fail())
+    while(true)
     {
-        std::cin.clear();
-        std::cin.ignore(256,'\n');
-        std::cout << "Not a valid option" << std::endl;
+        std::cout << "Would you like to \033[32mload\033[0m a game or start a \033[32mnew\033[0m one?" << std::endl;
+        
+        std::getline(std::cin, modeChoice);
+        
+        if(modeChoice == "new" || modeChoice == "load")
+        {
+            break;
+        }
+    }
+    
+    MapParser mp;
+    
+    if(modeChoice == "new")
+    {
+        MapParser mp("in", &world, &player);
+        mp.tokenize();
+        mp.evaluate();
+        chooseClass:
+        
+        std::cout << "Choose your class" << std::endl;
+        std::cout << "1. Wizard" << std::endl;
         std::cout << "Choose one: ";
+        
+        int choice;
         std::cin >> choice;
         std::cout << std::endl;
+        
+        while(std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore(256,'\n');
+            std::cout << "Not a valid option" << std::endl;
+            std::cout << "Choose one: ";
+            std::cin >> choice;
+            std::cout << std::endl;
+        }
+        
+        if(choice < 1 || choice > 1 )
+        {
+            goto chooseClass;
+        }
+        
+        chosenClass = choice;
+        
+        std::cout << "Enter your name: ";
+        std::cin >> name;
+        
+        
+        switch(chosenClass)
+        {
+            case 1:
+                player = new Wizard(name, Wizard::STARTING_HP);
+                player->move_to(world[mp.get_player_start()]);
+                break;
+        }
+        
+        
     }
-    
-    if(choice < 1 || choice > 1 )
+    else if(modeChoice == "load")
     {
-        goto chooseClass;
+        std::string worldname;
+        std::cout << "Enter the name of your savefile: ";
+        std::getline(std::cin, worldname);
+        std::cout << std::endl;
+        std::cout << "Loading world..." << std::endl;
+        MapParser mp(worldname, &world, &player);
+        mp.tokenize();
+        mp.evaluate();
     }
     
-    chosenClass = choice;
     
-    std::cout << "Enter your name: ";
-    std::cin >> name;
-    
-    
-    switch(chosenClass)
-    {
-        case 1:
-            player = new Wizard(name, Wizard::STARTING_HP);
-            player->move_to(world[player_start]);
-            break;
-    }
     
     loadAliases("aliases", player);
     
     //CLEAR ALL INPUT
     std::cin.clear();
-    std::cin.ignore(256,'\n');
-    
-    
-    
-    /**
-     * INITIALIZE ACTORS
-     **/
-     
-    //Troll* troll = new Troll("Sven");
-    //troll->move_to(world[3]);
    /**
     * MAIN LOOP
     * 
     **/
    while(true)
    {
-       std::clog << "Actor turns" << std::endl;
-
        global::map_on_actors([] (Actor* a) { a->action();});
        
+       playerTurn:
        player->action();
        
        //Clear any leftover input
@@ -152,25 +168,21 @@ int main() {
        
        if(global::should_save_be_executed())
        {
-           //TODO: ACTUALLY SAVE
+           MapSaver::save(world,player, global::save_filename());
            global::has_executed_save();
+           goto playerTurn;
        }
        if(player->_quit)
        {
            break;
        }
    }
-   std::cout << "Trying to delete player" << std::endl;
-   delete player;
    
-   std::cout << "Trying to delete all rooms" << std::endl;
+   delete player;
    for (std::vector<Environment* >::iterator i = world.begin(); 
    i != world.end(); ++i) 
    {
-       std::cout << "Trying a room" << std::endl;
       delete (*i); 
    }
-   
-   std::cout << "Deleting all npcs" << std::endl;
    global::map_on_actors([] (Actor* a) {delete a;});
 }

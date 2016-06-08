@@ -14,6 +14,9 @@
 #include "Room.h"
 #include "LockedRoom.h"
 #include "Troll.h"
+#include "HealthPotion.h"
+#include "global.h"
+#include "Wizard.h"
 
 namespace labgame
 {
@@ -30,16 +33,29 @@ namespace labgame
     const std::string MapParser::ARMOR_NAME = "armor";
     const std::string MapParser::CONTAINER_NAME = "container";
     const std::string MapParser::BACKPACK_NAME = "backpack";
+    const std::string MapParser::HEALTHPOTION_NAME = "healthpotion";
+    
+    const std::string MapParser::PLAYER_START = "player_start";
+    
+    const std::string MapParser::WIZARD_NAME = "wizard";
     
     const std::string MapParser::TROLL_NAME = "troll";
     
     const char MapParser::DELIMETER = ';';
+    const char MapParser::SPECIFIER_DELIMETER = ':';
+    const char MapParser::ARRAY_START = '[';
+    const char MapParser::ARRAY_END = ']';
     
     
     const int MapParser::MAX_WORLD_SIZE = 200000;
     
+    MapParser::MapParser()
+    {
+        
+    }
+    
     MapParser::MapParser(const std::string& s, 
-        std::vector<labgame::Environment*> * _w, Player* _p) :
+        std::vector<labgame::Environment*> * _w, Player** _p) :
         world(_w), player(_p)
     {
         this-> filename = s;
@@ -54,9 +70,6 @@ namespace labgame
             assert_token(specifier, Token::SPECIFIER);
             
             std::string specifier_data = specifier.get_data_as_string();
-            
-            std::clog << "Found specifier_data: " << specifier_data << std::endl;
-            
             /**
              * HANDLE ROOMS
              **/
@@ -90,7 +103,6 @@ namespace labgame
                 if(specifier_data == ROOM_NAME)
                 {
                     world->insert(pos, new Room(id, desc_token.get_data_as_string()));
-                    std::clog << "Added new room with id " << id << std::endl;
                 }
                 else if(specifier_data == FOREST_NAME)
                 {
@@ -98,7 +110,6 @@ namespace labgame
                     assert_token(weather_token, Token::INT);
                     world->insert(pos, new Forest(id, desc_token.get_data_as_string(),
                         static_cast<Weather::TYPE>(weather_token.get_data_as_int())));
-                    std::clog << "Added new forest with id " << id << std::endl;
                 }
                 else if(specifier_data == LOCKEDROOM_NAME)
                 {
@@ -191,10 +202,23 @@ namespace labgame
              **/
             else if(is_object(specifier_data))
             {
-                Token id_token = pop();
-                assert_token(id_token, Token::INT);
+                Token id_name_token = pop();
                 
-                int id = id_token.get_data_as_int();
+                int id = -1;
+                std::string actor_name;
+                
+                if(id_name_token.get_type() == Token::INT)
+                {
+                    id = id_name_token.get_data_as_int();
+                }
+                else if(id_name_token.get_type() == Token::STRING)
+                {
+                    actor_name = id_name_token.get_data_as_string();
+                }
+                else
+                {
+                    assert_token(id_name_token, Token::INT);
+                }
                 
                 Token name_token = pop();
                 assert_token(name_token, Token::STRING);
@@ -255,8 +279,50 @@ namespace labgame
                     
                     o = new Backpack(name_token.get_data_as_string(), size_token.get_data_as_int(), strength, dexterity, constitution, intelligence, wisdom, charisma);
                 }
+                else if(specifier_data == HEALTHPOTION_NAME)
+                {
+                    Token heal_token = pop();
+                    assert_token(heal_token, Token::INT);
+                    Token uses_token = pop();
+                    assert_token(uses_token, Token::INT);
+                    
+                    o = new HealthPotion(name_token.get_data_as_string(), heal_token.get_data_as_int(), uses_token.get_data_as_int());
+                }
                 
-                (*world)[id-1]->add_item(o);
+                if(id != -1)
+                {
+                    (*world)[id-1]->add_item(o);
+                }
+                else
+                {
+                    bool add_item = true;
+                    Actor * a = global::get_actor(actor_name);
+                    if(a == nullptr && (*player) != nullptr && (*player)->name() == actor_name)
+                    {
+                            (*player)->put_item(o);
+                            o->owner = *player;
+                            add_item = false;
+                    }
+                    else if(a == nullptr)
+                    {
+                        std::cerr << "Error in input file on line " << id_name_token.get_line() << std::endl;
+                        std::cerr << "Actor name specified " << actor_name << " does not exist (yet). If this actor does exist in the file, make sure this declaration is after the actor declaration." << std::endl;
+                        exit(1);
+                    }
+                    
+                    if(add_item)
+                    {
+                        bool success = a->put_item(o);
+                        o->owner = a;
+                        
+                        if(!success)
+                        {
+                            std::cerr << "Inconsistent mapfile, too many items in actor " << a->full_name() << " inventory." << std::endl;
+                            std::cerr << "Error occurred on line " << id_name_token.get_line() << std::endl;
+                            exit(1);
+                        }
+                    }
+                }
             }
             
             /**
@@ -270,6 +336,15 @@ namespace labgame
                 Token name_token = pop();
                 assert_token(name_token, Token::STRING);
                 
+                Token hp_token = peek();
+                bool has_hp = false;
+                if(hp_token.get_type() == Token::INT)
+                {
+                    pop();
+                    has_hp = true;
+                }
+                
+                
                 int id = id_token.get_data_as_int() - 1;
                 
                 if(specifier_data == TROLL_NAME)
@@ -277,14 +352,49 @@ namespace labgame
                     //Not a memory leak: all npcs are added to a map when created
                     Troll * t = new Troll(name_token.get_data_as_string());
                     t->move_to((*world)[id]);
+                    if(has_hp)
+                    {
+                        t->set_hp(hp_token.get_data_as_int());
+                    }
                 }
             }
             
-            else if(specifier_data == "player_start")
+            else if(specifier_data == WIZARD_NAME)
+            {
+                Token name = pop();
+                assert_token(name, Token::STRING);
+                Token hp = pop();
+                assert_token(hp, Token::INT);
+                Token mp = pop();
+                assert_token(mp, Token::INT);
+                std::vector<std::string> spells;
+                
+                if(peek().get_type() == Token::ARRAY_START)
+                {
+                    Token s_token = pop();
+                    while(peek().get_type() != Token::ARRAY_END)
+                    {
+                        Token spell = pop();
+                        assert_token(spell, Token::STRING);
+                        spells.push_back(spell.get_data_as_string());
+                    }
+                    Token e_token = pop();
+                }
+                
+                (*player) = new Wizard(name.get_data_as_string(), hp.get_data_as_int(), mp.get_data_as_int(), spells);
+                
+                (*player)->move_to((*world)[player_start-1]);
+            }
+            
+            else if(specifier_data == PLAYER_START)
             {
                 Token id = pop();
                 assert_token(id, Token::INT);
                 this->player_start = id.get_data_as_int();
+                if(*player != nullptr)
+                {
+                    (*player)->move_to((*world)[player_start-1]);
+                }
             }
             
             else
@@ -322,7 +432,7 @@ namespace labgame
         if(t.get_type() != type)
         {
             std::cerr << "Error in input file on line " << t.get_line() << std::endl;
-            std::cerr << "Token was of type: " << token_enum_convert(static_cast<Token::TOKENTYPE>(t.get_type()))<< std::endl;
+            std::cerr << "Token " << t.get_data_as_string() << " was of type: " << token_enum_convert(static_cast<Token::TOKENTYPE>(t.get_type()))<< std::endl;
             std::cerr << "Should have been of type " << token_enum_convert(type) << std::endl;
             exit(1);
         }
@@ -396,7 +506,7 @@ namespace labgame
     
     bool MapParser::is_object(std::string& name) const
     {
-        if(name == OBJECT_NAME || name == WEAPON_NAME || name == ARMOR_NAME || name == BACKPACK_NAME || name == CONTAINER_NAME)
+        if(name == OBJECT_NAME || name == WEAPON_NAME || name == ARMOR_NAME || name == BACKPACK_NAME || name == CONTAINER_NAME || name == HEALTHPOTION_NAME)
         {
             return true;
         }
@@ -417,7 +527,7 @@ namespace labgame
         std::string n = stringtok(line, ':');
         tokens.push(Token(Token::SPECIFIER, n, currentLineCounter));
         parse_arguments(line);
-        tokens.push(Token(Token::NEWLINE, "\n", currentLineCounter));
+        tokens.push(Token(Token::NEWLINE, "\n", currentLineCounter, false));
     }
     
     void MapParser::parse_arguments(std::string& line)
@@ -427,7 +537,7 @@ namespace labgame
         {
             if(is_number(t))
             {
-                tokens.push(Token(Token::INT, t, currentLineCounter));
+                tokens.push(Token(Token::INT, t, currentLineCounter, false));
             }
             else if(t.at(0) == '[') 
             {
@@ -443,7 +553,7 @@ namespace labgame
                     std::cout << "Invalid array in input map file, can't continue." << std::endl;
                     exit(1);
                 }
-                tokens.push(Token(Token::ARRAY_START, "[", currentLineCounter));
+                tokens.push(Token(Token::ARRAY_START, "[", currentLineCounter, false));
 
                 std::size_t startPos = currentCounter - t.length() - 1;
                 
@@ -469,11 +579,11 @@ namespace labgame
                     ++lineCounter;
                 }
                 
-                tokens.push(Token(Token::ARRAY_END, "]", currentLineCounter));
+                tokens.push(Token(Token::ARRAY_END, "]", currentLineCounter, false));
             }
             else
             {
-                tokens.push(Token(Token::STRING, t, currentLineCounter));
+                tokens.push(Token(Token::STRING, t, currentLineCounter, false));
             }
         }
     }

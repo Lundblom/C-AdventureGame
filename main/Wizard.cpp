@@ -5,7 +5,7 @@
 #include "Player.h"
 #include "Wizard.h"
 #include "Spell.h"
-
+#include "MapParser.h"
 
 const int labgame::Wizard::STARTING_HP = 13;
 const int labgame::Wizard::STARTING_MP = 50;
@@ -20,8 +20,25 @@ const std::map<std::string, labgame::Spell> labgame::Wizard::all_spells = {
 
 labgame::Wizard::Wizard(std::string name, int hp) : Player(name, hp)
 {
-    //known_spells.push_back("fireball");
-    //known_spells.push_back("arcane bolt");
+    known_spells.push_back("fireball");
+    known_spells.push_back("arcane bolt");
+    
+    this->strength =  DEFAULT_STRENGTH;
+    this->intelligence = DEFAULT_INTELLIGENCE;
+}
+
+labgame::Wizard::Wizard(std::string name, int hp, int mp, std::vector<std::string> spells) : Player(name, hp), _mp(mp)
+{
+    for (auto i = spells.begin(); i != spells.end(); ++i) 
+    {
+        auto res = all_spells.find(*i);
+        if(res == all_spells.end())
+        {
+            std::cerr << "Spell " << *i << " not found, please check the name " << std::endl;
+            exit(1);
+        }
+        known_spells.push_back(*i);
+    }
     
     this->strength =  DEFAULT_STRENGTH;
     this->intelligence = DEFAULT_INTELLIGENCE;
@@ -29,7 +46,6 @@ labgame::Wizard::Wizard(std::string name, int hp) : Player(name, hp)
 
 labgame::Wizard::~Wizard()
 {
-    std::cout << "Destroying wizard" << std::endl;
     known_spells.clear();
 }
 
@@ -73,7 +89,35 @@ void labgame::Wizard::cast_spell(Actor* target)
     }
 }
 
-
+std::string labgame::Wizard::get_as_serializable() const
+{
+    std::string result = "";
+    
+    result += MapParser::WIZARD_NAME;
+    result += MapParser::SPECIFIER_DELIMETER;
+    result += name();
+    result += MapParser::DELIMETER;
+    result += std::to_string(hp());
+    result += MapParser::DELIMETER;
+    result += std::to_string(mp());
+    
+    if(known_spells.size() != 0)
+    {
+        result += MapParser::DELIMETER;
+        result += MapParser::ARRAY_START;
+        for (auto i = known_spells.begin(); i != known_spells.end(); ++i) 
+        {
+            result += *i;
+            if((i+1) != known_spells.end())
+            {
+                result += MapParser::DELIMETER;
+            }
+        }
+        result += MapParser::ARRAY_END;
+    }
+    
+    return result;
+}
 
 void labgame::Wizard::fight(Actor* a)
 {
@@ -117,8 +161,6 @@ void labgame::Wizard::fight(Actor* a)
             goto start; //Please dont kill me
             
     }
-    
-    //std::cin.ignore(256,'\n');
     std::cin.clear();
     
 }

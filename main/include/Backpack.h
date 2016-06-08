@@ -9,5 +9,8 @@ namespace labgame
 
         public:
         Backpack(std::string, int, int, int, int, int , int, int);
+        virtual ~Backpack();
+        
+        virtual std::string get_as_serializable(std::string) const override;
     };
 }

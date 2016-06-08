@@ -15,6 +15,16 @@ namespace labgame
         data = _data;
     }
     
+    Token::Token(Token::TOKENTYPE t, std::string _data, int _line, bool _tolower) 
+        : type(t), line(_line)
+    {
+        if(_tolower)
+        {
+            std::transform(_data.begin(), _data.end(), _data.begin(), ::tolower);
+        }
+        data = _data;
+    }
+    
     int Token::get_data_as_int() const
     {
         return stoi(data);

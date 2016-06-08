@@ -18,7 +18,9 @@ namespace labgame
         
         Actor * actor_target;
         std::string string_target;
-        std::string string_target2;
+        
+        std::string split1;
+        std::string split2;
         
         template<class F, class... Args>
         void add_to_map(std::string name, F f, Args&&... args);
@@ -51,18 +53,18 @@ namespace labgame
         virtual std::string type() const = 0;
         virtual std::string comparable_type() const;
         virtual void fight(Actor*) override;
+        virtual void put_in_container(std::string, std::string);
+        virtual void remove_from_container(std::string, std::string);
         
         virtual bool pick_up(std::string) override;
         
         void inspect();
         void quit();
         
-        void save();
+        void save(std::string);
         
         
-        void use_item(std::string s);
-        void add_to_container_p(std::string*);
-        void remove_from_container_p(std::string*);
+        void use_item(std::string s);;
         
         void talk_to(Actor *);
         

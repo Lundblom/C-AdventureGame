@@ -13,6 +13,8 @@ namespace labgame
         
         int Damage() const {return damage;}
         
+        virtual std::string get_as_serializable(std::string) const override;
+        
         virtual void use() override;
     };
 }

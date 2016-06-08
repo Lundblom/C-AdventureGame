@@ -15,6 +15,7 @@ namespace labgame
         public:
         Equippable(std::string);
         Equippable(std::string, int, int, int, int, int, int);
+        ~Equippable();
         
         int Strength() const {return strength;}
         int Dexterity() const {return dexterity;}

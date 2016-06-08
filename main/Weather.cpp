@@ -10,6 +10,8 @@ namespace labgame
     const std::string Weather::SNOW_DESC = "It is snowing here.";
     const std::string Weather::ACIDRAIN_DESC = "It is raning acid here!";
     const int Weather::ACID_DAMAGE = 2;
+    
+    
     Weather::Weather(TYPE t) : type(t)
     {
         switch(t)
@@ -39,6 +41,11 @@ namespace labgame
     std::string Weather::description() const
     {
         return desc;
+    }
+    
+    int Weather::get_weather_number() const
+    {
+        return type;
     }
     
     void Weather::effect(Actor * a)

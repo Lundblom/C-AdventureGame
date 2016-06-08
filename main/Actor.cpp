@@ -8,6 +8,7 @@
 #include "Equippable.h"
 #include "LockedRoom.h"
 #include "Container.h"
+#include "MapParser.h"
 
 
 namespace labgame
@@ -21,7 +22,6 @@ namespace labgame
     
     Actor::~Actor()
     {
-        std::cout << "Actor is being destroyed" << std::endl;
         for (std::vector<Object*>::const_iterator i = inventory.begin();
         i != inventory.end(); ++i) 
         {
@@ -29,7 +29,6 @@ namespace labgame
             {
                 delete (*i);
             }
-            std::cout << "Destroying in inventory" << std::endl;
         }
     }
     
@@ -94,22 +93,18 @@ namespace labgame
         
     }
     
-    void Actor::put_in_container(std::string t, std::string s)
+    void Actor::put_in_container(std::string s, std::string t)
     {
         Object * o = find_item_in_inventory(s);
         Object * ot = find_item_in_inventory(t);
         if(o == nullptr || ot == nullptr)
         {
-            std::cout << "didnt find " << s << " or " << t << std::endl;
             return;
         }
-        
-        std::clog << "Found " << o->Name() << "   " << ot->Name() << std::endl;
         
         if(Container * c = dynamic_cast<Container*>(o))
         {
                 bool success = c->add_item(ot);
-               
                 if(success)
                 {
                     find_and_delete_item_in_inventory(t);
@@ -117,7 +112,7 @@ namespace labgame
         }
     }
     
-    void Actor::remove_from_container(std::string t, std::string s)
+    void Actor::remove_from_container(std::string s, std::string t)
     {
         Object * o = find_item_in_inventory(s);
         if(o == nullptr)
@@ -227,16 +222,12 @@ namespace labgame
     Object* Actor::find_and_delete_item_in_inventory(std::string name)
     {
         Object* val = nullptr;
-        std::clog << "in find and delete, looping" << std::endl;
         for (std::vector<Object*>::iterator i = inventory.begin(); 
             i != inventory.end(); ++i) 
         {
-            std::clog << "loop" << std::endl;
             if((*i)->Name() == name)
             {
-                std::clog << "found name, dereferencing" << std::endl;
                 val = *i;
-                std::clog << "erasing" << std::endl;
                 inventory.erase(i);
                 break;
             }
@@ -259,7 +250,7 @@ namespace labgame
     //Inventory size formula: floor( sqrt (strength) + strength^1.2)
     int Actor::max_inventory_size() const
     {
-        return (floor(pow(this->strength, 0.5) + pow(this->strength, 1.2)));
+        return (floor(pow(strength, 0.5) + pow(strength, 1.2)));
     }
     
     void Actor::use_ability(std::function<void(Actor*)> lambda, Actor* target)
@@ -269,7 +260,14 @@ namespace labgame
     
     bool Actor::inventory_is_full() const
     {
-        return (inventory.size() == max_inventory_size());
+        int m = max_inventory_size();
+        int n = inventory.size();
+        return m == n;
+    }
+    
+    Environment* Actor::get_location() const
+    {
+        return current_location;
     }
     
     void Actor::move_to(Environment* e)
@@ -331,7 +329,6 @@ namespace labgame
     
     void Actor::unlock(std::string dir)
     {
-        std::cout << "In actor unlock" << std::endl;
         LockedRoom* r = dynamic_cast<LockedRoom*>(current_location);
         if(r != nullptr)
         {
@@ -348,6 +345,27 @@ namespace labgame
         }
     }
     
+    std::string Actor::get_inventory_as_serializable() const
+    {
+        std::string result;
+        
+        for (auto i = inventory.begin(); i != inventory.end(); ++i) 
+        {
+            result += (*i)->get_as_serializable(this->name());
+            result += "\n";
+        }
+        return result;
+    }
+    
+    void Actor::set_hp(int hp)
+    {
+        _hp = hp;
+        if(_hp > maxHp)
+        {
+            maxHp = hp;
+        }
+    }
+    
     void Actor::use_item(std::string s)
     {
         Object * o = find_item_in_inventory(s);
@@ -357,6 +375,11 @@ namespace labgame
         }
         
         o->use();
+        if(o->no_uses_left())
+        {
+            find_and_delete_item_in_inventory(s);
+            delete o;
+        }
     }
     
     bool Actor::is_equippable(Object * o) const
@@ -367,49 +390,32 @@ namespace labgame
     
     void Actor::go(std::string direction)
     {
-        std::clog << "in go" << std::endl;
         std::pair<Environment*, std::string> p = this->current_location->get_neighbour_and_out(direction);
         Environment* e = p.first;
         std::string eOut = p.second;
         
-        std::clog << "e is " << e << std::endl;
-        
         if(e == nullptr)
         {
-            std::cout << "Null room" << std::endl;
             return;
         }
-        std::clog << "Curren loc: " << current_location << std::endl;
         if(current_location != nullptr)
         {
             if(!current_location->can_leave(this, direction))
             {
-                std::cout << "You cant leave  " << current_location->get_id() << std::endl;
                 return;
             }
         }
         
-        std::clog << "Checking if can enter" << std::endl;
-        
         if(!e->can_enter(this, eOut))
         {
-            std::cout << "You cant enter " << e->get_id() << std::endl;
             return;
         }
-        
-        std::clog << "Can enter" << std::endl;
-        
         //Else
         if(current_location != nullptr)
         {
-            std::clog << "Leaving current" << std::endl;
             current_location->leave(this);
         }
-        std::clog << "Changing current" << std::endl;
         current_location = e;
         current_location->enter(this);
-        
-        //DEBUG!
-        std::cout << full_name() << " is now in room with id " << current_location->get_id() << std::endl;
     }
 }

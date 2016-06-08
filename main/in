@@ -3,8 +3,9 @@ room:2;INCREDIBLE ROOM!
 
 TWO_WAY:1;[[e;w;2]]
 
-Troll:2;Sverker
+Troll:2;Sverker;10
 
 Backpack:2;Superpack;10;2;0;0;0;0;0
-
+HealthPotion:1;hp;15;1
+Wizard:Sverkersson;40;4;[fireball;arcane bolt]
 PLAYER_START:1

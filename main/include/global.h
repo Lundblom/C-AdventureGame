@@ -8,6 +8,7 @@ namespace labgame
     {
         private:
         static bool _save;
+        static std::string _filename;
         
         static std::map<std::string, Actor *> actor_map;
         static void init();
@@ -18,8 +19,9 @@ namespace labgame
         static void map_on_actors(std::function<void(Actor*)>);
         static Actor * get_actor(std::string);
         
-        static void set_save();
+        static void save(std::string);
         static bool should_save_be_executed();
+        static std::string save_filename();
         static void has_executed_save();
         
     };

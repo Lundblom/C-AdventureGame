@@ -27,6 +27,7 @@ namespace labgame
         public:
         
         Token(TOKENTYPE, std::string, int);
+        Token(TOKENTYPE, std::string, int, bool);
         
         int get_type() const;
         int get_line() const;
